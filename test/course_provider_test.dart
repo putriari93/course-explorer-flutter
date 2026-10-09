@@ -1,24 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
+
 import 'dart:async';
+
 import 'package:latihan_1/providers/course_provider.dart';
 import 'package:latihan_1/repositories/course_repository.dart';
 import 'package:latihan_1/services/course_service.dart';
 import 'package:latihan_1/models/course.dart';
 
 void main() {
-  test('Favorite memberi notifikasi dan koleksi tidak bisa diubah dari luar', () {
-    final provider = CourseProvider(CourseRepository(CourseService()));
-    addTearDown(provider.dispose);
-    var notifications = 0;
-    provider.addListener(() => notifications++);
-    provider.toggleFavorite('MOB01');
-    expect(provider.isFavorite('MOB01'), isTrue);
-    expect(notifications, 1);
-    expect(() => provider.favorites.add('MOB02'), throwsUnsupportedError);
-    provider.toggleFavorite('MOB01');
-    expect(provider.favorites, isEmpty);
-    expect(notifications, 2);
-  });
+  test(
+    'Favorite memberi notifikasi dan koleksi tidak bisa diubah dari luar',
+    () {
+      final provider = CourseProvider(CourseRepository(CourseService()));
+      addTearDown(provider.dispose);
+      var notifications = 0;
+      provider.addListener(() => notifications++);
+      provider.toggleFavorite('MOB01');
+      expect(provider.isFavorite('MOB01'), isTrue);
+      expect(notifications, 1);
+      expect(() => provider.favorites.add('MOB02'), throwsUnsupportedError);
+      provider.toggleFavorite('MOB01');
+      expect(provider.favorites, isEmpty);
+      expect(notifications, 2);
+    },
+  );
 
   test('Loading, error, retry, success dan pemanggilan ganda', () async {
     final repository = ControlledRepository();
@@ -36,7 +41,14 @@ void main() {
     repository.result = Completer<List<Course>>();
     final retry = provider.loadCourses();
     expect(provider.error, isNull);
-    repository.result.complete([const Course(code: 'MOB01', title: 'Git & GitHub', credits: 2, status: 'done')]);
+    repository.result.complete([
+      const Course(
+        code: 'MOB01',
+        title: 'Git & GitHub',
+        credits: 2,
+        status: 'done',
+      ),
+    ]);
     await retry;
     expect(provider.hasLoaded, isTrue);
     expect(provider.courses.length, 1);
@@ -51,6 +63,7 @@ void main() {
     await pending;
   });
 }
+
 class ControlledRepository extends CourseRepository {
   ControlledRepository() : super(CourseService());
   Completer<List<Course>> result = Completer<List<Course>>();
