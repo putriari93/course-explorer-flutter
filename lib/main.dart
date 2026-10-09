@@ -89,6 +89,23 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.green.shade100,
+                          child: const Text(
+                            '$studentId - $studentName',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
                   _buildProfileCard(student),
                   const SizedBox(height: 12),
                   Row(
