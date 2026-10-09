@@ -4,8 +4,15 @@ import '../models/course.dart';
 import 'course_card.dart';
 
 class CourseGrid extends StatelessWidget {
-  const CourseGrid({super.key, required this.courses});
+  const CourseGrid({
+    super.key,
+    required this.courses,
+    this.showFavorite = true,
+    this.showStatus = false,
+  });
   final List<Course> courses;
+  final bool showFavorite;
+  final bool showStatus;
   int columnsFor(double width) => width < 600
       ? 1
       : width < 840
@@ -17,11 +24,7 @@ class CourseGrid extends StatelessWidget {
       builder: (context, constraints) {
         final columns = columnsFor(MediaQuery.sizeOf(context).width);
 
-        final itemHeight = constraints.maxWidth < 600
-            ? 120.0
-            : constraints.maxWidth < 840
-            ? 115.0
-            : 110.0;
+        const itemHeight = 136.0;
 
         return GridView.builder(
           shrinkWrap: true,
@@ -34,7 +37,14 @@ class CourseGrid extends StatelessWidget {
           ),
           itemCount: courses.length,
           itemBuilder: (context, index) {
-            return CourseCard(course: courses[index]);
+            return CourseCard(
+              key: showStatus
+                  ? ValueKey('home-course-${courses[index].code}')
+                  : null,
+              course: courses[index],
+              showFavorite: showFavorite,
+              showStatus: showStatus,
+            );
           },
         );
       },

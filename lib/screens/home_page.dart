@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/course_grid.dart';
 import '../providers/course_provider.dart';
 import '../widgets/identity_card.dart';
-import '../widgets/state_demos.dart';
 import '../widgets/responsive_layout_demo.dart';
-import '../widgets/flexible_layout_demo.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final courses = context.watch<CourseProvider>().courses;
-    final completedCount = courses
-        .where((course) => course.status == 'done')
-        .length;
-    final size = MediaQuery.sizeOf(context);
-    final orientation = MediaQuery.orientationOf(context);
-    final layoutType = size.width < 600
-        ? 'Compact'
-        : size.width < 840
-        ? 'Medium'
-        : 'Expanded';
+    final provider = context.watch<CourseProvider>();
+    final courses = provider.courses;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -29,98 +20,88 @@ class HomePage extends StatelessWidget {
         children: [
           const IdentityCard(),
           const SizedBox(height: 12),
-          Text(
-            'Jumlah favorite: ${context.watch<CourseProvider>().favorites.length}',
-          ),
-          const ChangeNotifierDemo(),
-          const LocalStateDemo(),
-          const FavoriteStateDemo(),
-          const FavoriteCounterNotifierDemo(),
-
-          const SizedBox(height: 12),
-
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Informasi Layar',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Text('Width: ${size.width.toStringAsFixed(0)}'),
-
-                  Text('Height: ${size.height.toStringAsFixed(0)}'),
-
-                  Text('Orientation: $orientation'),
-
-                  Text('Layout: $layoutType'),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          const ResponsiveLayoutDemo(),
-
-          const SizedBox(height: 12),
-
-          const FlexibleLayoutDemo(),
-
-          const SizedBox(height: 12),
-
           Row(
+            key: const ValueKey('home-statistics'),
             children: [
               _buildSummaryCard(
+                id: 'courses',
                 value: '${courses.length}',
-                label: 'Topik',
+                label: 'Courses',
                 icon: Icons.menu_book_rounded,
               ),
-
-              const SizedBox(width: 12),
-
+              const SizedBox(width: 4),
               _buildSummaryCard(
-                value: '$completedCount',
-                label: 'Selesai',
-                icon: Icons.task_alt_rounded,
+                id: 'favorites',
+                value: '${provider.favorites.length}',
+                label: 'Favorites',
+                icon: Icons.favorite,
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          Text('Daftar Course', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          if (provider.isLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (provider.error != null)
+            Column(
+              children: [
+                Text(provider.error!),
+                TextButton(
+                  onPressed: provider.loadCourses,
+                  child: const Text('Coba lagi'),
+                ),
+              ],
+            )
+          else
+            CourseGrid(courses: courses, showFavorite: false, showStatus: true),
+          const SizedBox(height: 12),
+          const ResponsiveLayoutDemo(),
         ],
       ),
     );
   }
 
   Widget _buildSummaryCard({
+    required String id,
     required String value,
     required String label,
     required IconData icon,
   }) {
     return Expanded(
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-          child: Column(
-            children: [
-              Icon(icon),
-
-              const SizedBox(height: 6),
-
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        key: ValueKey('home-stat-$id'),
+        margin: EdgeInsets.zero,
+        child: SizedBox(
+          height: 110,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+            child: Column(
+              children: [
+                Icon(icon, size: 20),
+                const SizedBox(height: 4),
+                FittedBox(
+                  child: Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-
-              Text(label, textAlign: TextAlign.center),
-            ],
+                const SizedBox(height: 4),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

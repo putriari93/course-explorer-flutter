@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/student_provider.dart';
 import '../models/student_identity.dart';
+import '../widgets/identity_card.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -49,6 +50,8 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const IdentityCard(),
+          const SizedBox(height: 12),
           _buildProfileCard(student),
 
           const SizedBox(height: 20),

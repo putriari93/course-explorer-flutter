@@ -4,8 +4,16 @@ import 'package:latihan_1/widgets/course_card.dart';
 
 import 'support/app_fixture.dart';
 
+import 'package:latihan_1/screens/profile_page.dart';
+
 void main() {
-  for (final size in [const Size(375, 667), const Size(1000, 800)]) {
+  for (final size in [
+    const Size(375, 667),
+    const Size(600, 800),
+    const Size(839, 800),
+    const Size(840, 800),
+    const Size(1000, 800),
+  ]) {
     testWidgets('Navigasi, grid dan detail pada $size', (tester) async {
       final provider = await pumpFixture(tester, size);
       expect(find.text('Putri Ari Laksmi'), findsOneWidget);
@@ -39,8 +47,8 @@ void main() {
       expect(find.text('NIM: 2415051091'), findsOneWidget);
       await tester.tap(find.text('Kembali'));
       await tester.pumpAndSettle();
-      await selectPage(tester, 'Profile');
-      expect(find.text('Semester 5'), findsOneWidget);
+      expect(find.text('Profile'), findsNothing);
+      expect(find.byType(ProfilePage, skipOffstage: false), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }
@@ -48,7 +56,14 @@ void main() {
     tester,
   ) async {
     await pumpFixture(tester, const Size(375, 667));
-    await selectPage(tester, 'Profile');
+    tester
+        .state<NavigatorState>(find.byType(Navigator))
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: ProfilePage()),
+          ),
+        );
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Kirim Feedback'));
     await tester.tap(find.text('Kirim Feedback'));
     await tester.pumpAndSettle();
