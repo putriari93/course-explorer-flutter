@@ -41,26 +41,24 @@ class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() =>
-      _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState
-    extends State<DashboardPage> {
-  late Future<Map<String, dynamic>>
-      studentFuture;
+class _DashboardPageState extends State<DashboardPage> {
+  late Future<Map<String, dynamic>> studentFuture;
 
   int currentIndex = 0;
 
   final Set<String> favoriteCourses = {};
 
-  final feedbackFormKey =
-      GlobalKey<FormState>();
+  final feedbackFormKey = GlobalKey<FormState>();
 
   String feedbackName = studentName;
   String feedbackNim = studentId;
   String feedbackComment = '';
   String? feedbackResult;
+
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -107,8 +105,7 @@ class _DashboardPageState
           currentIndex = index;
         });
       },
-      labelType:
-          NavigationRailLabelType.all,
+      labelType: NavigationRailLabelType.all,
       destinations: const [
         NavigationRailDestination(
           icon: Icon(Icons.home),
@@ -128,16 +125,9 @@ class _DashboardPageState
 
   @override
   Widget build(BuildContext context) {
-    final size =
-        MediaQuery.of(context).size;
-
-    final orientation =
-        MediaQuery.of(context).orientation;
-
-    final layoutType =
-        size.width < 600
-            ? 'Compact'
-            : 'Wide';
+    final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+    final layoutType = size.width < 600 ? 'Compact' : 'Wide';
 
     final pageTitles = [
       'Learning Dashboard',
@@ -145,16 +135,13 @@ class _DashboardPageState
       'Profile',
     ];
 
-    return FutureBuilder<
-        Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>>(
       future: studentFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child:
-                  CircularProgressIndicator(),
+              child: CircularProgressIndicator(),
             ),
           );
         }
@@ -163,14 +150,10 @@ class _DashboardPageState
           return Scaffold(
             body: Center(
               child: Padding(
-                padding:
-                    const EdgeInsets.all(
-                  24,
-                ),
+                padding: const EdgeInsets.all(24),
                 child: Text(
                   'Gagal memuat data: ${snapshot.error}',
-                  textAlign:
-                      TextAlign.center,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -180,30 +163,23 @@ class _DashboardPageState
         final data = snapshot.data!;
 
         final student =
-            data['student']
-                as Map<String, dynamic>;
+            data['student'] as Map<String, dynamic>;
 
         final courses =
-            (data['courses']
-                    as List<dynamic>)
-                .cast<
-                    Map<String, dynamic>>();
+            (data['courses'] as List<dynamic>)
+                .cast<Map<String, dynamic>>();
 
-        final completedCount =
-            courses
-                .where(
-                  (course) =>
-                      course['status'] ==
-                      'done',
-                )
-                .length;
+        final completedCount = courses
+            .where(
+              (course) => course['status'] == 'done',
+            )
+            .length;
 
         final pages = [
           _buildHomePage(
             student: student,
             courses: courses,
-            completedCount:
-                completedCount,
+            completedCount: completedCount,
             size: size,
             orientation: orientation,
             layoutType: layoutType,
@@ -217,15 +193,12 @@ class _DashboardPageState
         ];
 
         return LayoutBuilder(
-          builder:
-              (context, constraints) {
-            if (constraints.maxWidth <
-                840) {
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 840) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(
-                    pageTitles[
-                        currentIndex],
+                    pageTitles[currentIndex],
                   ),
                   backgroundColor:
                       Theme.of(context)
@@ -237,8 +210,7 @@ class _DashboardPageState
                           .onPrimary,
                 ),
                 body: SafeArea(
-                  child:
-                      pages[currentIndex],
+                  child: pages[currentIndex],
                 ),
                 bottomNavigationBar:
                     _buildNavigationBar(),
@@ -248,8 +220,7 @@ class _DashboardPageState
             return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  pageTitles[
-                      currentIndex],
+                  pageTitles[currentIndex],
                 ),
                 backgroundColor:
                     Theme.of(context)
@@ -270,9 +241,7 @@ class _DashboardPageState
                     ),
 
                     Expanded(
-                      child:
-                          pages[
-                              currentIndex],
+                      child: pages[currentIndex],
                     ),
                   ],
                 ),
@@ -287,19 +256,15 @@ class _DashboardPageState
   // home
 
   Widget _buildHomePage({
-    required Map<String, dynamic>
-        student,
-    required List<
-            Map<String, dynamic>>
-        courses,
+    required Map<String, dynamic> student,
+    required List<Map<String, dynamic>> courses,
     required int completedCount,
     required Size size,
     required Orientation orientation,
     required String layoutType,
   }) {
     return SingleChildScrollView(
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -307,13 +272,10 @@ class _DashboardPageState
           Card(
             child: Padding(
               padding:
-                  const EdgeInsets.all(
-                16,
-              ),
+                  const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                    CrossAxisAlignment.start,
                 children: [
                   const Text(
                     '$studentId - $studentName',
@@ -323,9 +285,7 @@ class _DashboardPageState
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
 
                   Text(
                     'Width: ${size.width.toStringAsFixed(0)}',
@@ -367,8 +327,8 @@ class _DashboardPageState
                 value:
                     '${courses.length}',
                 label: 'Topik',
-                icon: Icons
-                    .menu_book_rounded,
+                icon:
+                    Icons.menu_book_rounded,
               ),
 
               const SizedBox(width: 12),
@@ -377,8 +337,8 @@ class _DashboardPageState
                 value:
                     '$completedCount',
                 label: 'Selesai',
-                icon: Icons
-                    .task_alt_rounded,
+                icon:
+                    Icons.task_alt_rounded,
               ),
             ],
           ),
@@ -390,13 +350,10 @@ class _DashboardPageState
   // course
 
   Widget _buildCoursesPage({
-    required List<
-            Map<String, dynamic>>
-        courses,
+    required List<Map<String, dynamic>> courses,
   }) {
     return SingleChildScrollView(
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -413,14 +370,13 @@ class _DashboardPageState
 
           Text(
             'Daftar Course',
-            style:
-                Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(
+                  fontWeight:
+                      FontWeight.bold,
+                ),
           ),
 
           const SizedBox(height: 12),
@@ -434,12 +390,10 @@ class _DashboardPageState
   // profile
 
   Widget _buildProfilePage({
-    required Map<String, dynamic>
-        student,
+    required Map<String, dynamic> student,
   }) {
     return SingleChildScrollView(
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -465,8 +419,7 @@ class _DashboardPageState
   ) {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             CircleAvatar(
@@ -489,29 +442,23 @@ class _DashboardPageState
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     'NIM: ${student['nim']}',
-                    style:
-                        const TextStyle(
+                    style: const TextStyle(
                       fontWeight:
                           FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
 
                   Text(
                     'Nama: ${student['name']}',
                   ),
 
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
 
                   Text(
                     student['semester']
@@ -545,14 +492,11 @@ class _DashboardPageState
             children: [
               Icon(icon),
 
-              const SizedBox(
-                height: 6,
-              ),
+              const SizedBox(height: 6),
 
               Text(
                 value,
-                style:
-                    const TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight:
                       FontWeight.bold,
@@ -574,12 +518,10 @@ class _DashboardPageState
   // grid course
 
   Widget _buildCourseGrid(
-    List<Map<String, dynamic>>
-        courses,
+    List<Map<String, dynamic>> courses,
   ) {
     return LayoutBuilder(
-      builder:
-          (context, constraints) {
+      builder: (context, constraints) {
         return GridView.builder(
           shrinkWrap: true,
           physics:
@@ -651,8 +593,7 @@ class _DashboardPageState
           // open detail
           onTap: () async {
             final result =
-                await Navigator.push<
-                    bool>(
+                await Navigator.push<bool>(
               context,
               MaterialPageRoute(
                 builder: (_) =>
@@ -670,9 +611,8 @@ class _DashboardPageState
                 );
               });
 
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
                 SnackBar(
                   content: Text(
                     '${course['title']} ditambahkan ke favorite',
@@ -690,10 +630,8 @@ class _DashboardPageState
             ),
 
             title: Text(
-              course['title']
-                  as String,
-              style:
-                  const TextStyle(
+              course['title'] as String,
+              style: const TextStyle(
                 fontWeight:
                     FontWeight.w600,
               ),
@@ -712,8 +650,7 @@ class _DashboardPageState
               icon: Icon(
                 isFavorite
                     ? Icons.favorite
-                    : Icons
-                        .favorite_border,
+                    : Icons.favorite_border,
                 color: isFavorite
                     ? Colors.red
                     : null,
@@ -723,8 +660,7 @@ class _DashboardPageState
               onPressed: () {
                 setState(() {
                   if (isFavorite) {
-                    favoriteCourses
-                        .remove(
+                    favoriteCourses.remove(
                       courseCode,
                     );
                   } else {
@@ -734,9 +670,8 @@ class _DashboardPageState
                   }
                 });
 
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
                   SnackBar(
                     content: Text(
                       isFavorite
@@ -881,9 +816,7 @@ class _DashboardPageState
                 ),
               ),
 
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
 
               const Text(
                 '$studentId - $studentName',
@@ -893,13 +826,10 @@ class _DashboardPageState
                 ),
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               TextFormField(
-                initialValue:
-                    studentName,
+                initialValue: studentName,
                 decoration:
                     const InputDecoration(
                   labelText: 'Nama',
@@ -922,13 +852,10 @@ class _DashboardPageState
                 },
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               TextFormField(
-                initialValue:
-                    studentId,
+                initialValue: studentId,
                 decoration:
                     const InputDecoration(
                   labelText: 'NIM',
@@ -951,9 +878,7 @@ class _DashboardPageState
                 },
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               TextFormField(
                 maxLines: 4,
@@ -988,33 +913,126 @@ class _DashboardPageState
                 },
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               SizedBox(
-                width:
-                    double.infinity,
+                width: double.infinity,
                 child: FilledButton(
-                  onPressed: () {
-                    if (feedbackFormKey
-                        .currentState!
-                        .validate()) {
-                      feedbackFormKey
-                          .currentState!
-                          .save();
+                  onPressed:
+                      isSubmitting
+                          ? null
+                          : () async {
+                              if (!feedbackFormKey
+                                  .currentState!
+                                  .validate()) {
+                                return;
+                              }
 
-                      setState(() {
-                        feedbackResult =
-                            'Nama: $feedbackName\n'
-                            'NIM: $feedbackNim\n'
-                            'Komentar: $feedbackComment';
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Kirim Feedback',
-                  ),
+                              final confirm =
+                                  await showDialog<bool>(
+                                context:
+                                    context,
+                                builder:
+                                    (context) {
+                                  return AlertDialog(
+                                    title:
+                                        const Text(
+                                      'Konfirmasi',
+                                    ),
+                                    content:
+                                        const Text(
+                                      'Kirim feedback ini?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed:
+                                            () {
+                                          Navigator.pop(
+                                            context,
+                                            false,
+                                          );
+                                        },
+                                        child:
+                                            const Text(
+                                          'Batal',
+                                        ),
+                                      ),
+                                      FilledButton(
+                                        onPressed:
+                                            () {
+                                          Navigator.pop(
+                                            context,
+                                            true,
+                                          );
+                                        },
+                                        child:
+                                            const Text(
+                                          'Kirim',
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
+                              if (confirm !=
+                                  true) {
+                                return;
+                              }
+
+                              feedbackFormKey
+                                  .currentState!
+                                  .save();
+
+                              setState(() {
+                                isSubmitting =
+                                    true;
+                              });
+
+                              await Future.delayed(
+                                const Duration(
+                                  seconds: 1,
+                                ),
+                              );
+
+                              if (!mounted) {
+                                return;
+                              }
+
+                              setState(() {
+                                isSubmitting =
+                                    false;
+
+                                feedbackResult =
+                                    'Nama: $feedbackName\n'
+                                    'NIM: $feedbackNim\n'
+                                    'Komentar: $feedbackComment';
+                              });
+
+                              ScaffoldMessenger
+                                      .of(context)
+                                  .showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text(
+                                    'Feedback berhasil dikirim',
+                                  ),
+                                ),
+                              );
+                            },
+
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child:
+                              CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Kirim Feedback',
+                        ),
                 ),
               ),
 
@@ -1040,16 +1058,15 @@ class _DashboardPageState
                   width:
                       double.infinity,
                   padding:
-                      const EdgeInsets
-                          .all(12),
+                      const EdgeInsets.all(
+                    12,
+                  ),
                   decoration:
                       BoxDecoration(
                     color:
-                        Colors.blue
-                            .shade50,
+                        Colors.blue.shade50,
                     borderRadius:
-                        BorderRadius
-                            .circular(
+                        BorderRadius.circular(
                       8,
                     ),
                   ),
@@ -1116,6 +1133,7 @@ class CourseDetailPage
         title:
             const Text('Detail Course'),
       ),
+
       body: SingleChildScrollView(
         padding:
             const EdgeInsets.all(24),
@@ -1413,9 +1431,8 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color:
-                        Colors.blue
-                            .shade100,
+                    color: Colors
+                        .blue.shade100,
                     child: const Text(
                       'Panel A\nFlex 2',
                       textAlign:
@@ -1432,9 +1449,8 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color:
-                        Colors.orange
-                            .shade100,
+                    color: Colors
+                        .orange.shade100,
                     child: const Text(
                       'Panel B\nFlex 1',
                       textAlign:
@@ -1460,15 +1476,14 @@ class FlexibleLayoutDemo
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children:
-                  skills
-                      .map(
-                        (skill) => Chip(
-                          label:
-                              Text(skill),
-                        ),
-                      )
-                      .toList(),
+              children: skills
+                  .map(
+                    (skill) => Chip(
+                      label:
+                          Text(skill),
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ),
