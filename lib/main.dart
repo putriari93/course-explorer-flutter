@@ -274,6 +274,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 12),
           const LocalStateDemo(),
           const FavoriteStateDemo(),
+          const FavoriteCounterNotifierDemo(),
 
           const SizedBox(height: 12),
 
@@ -1325,5 +1326,58 @@ class _FavoriteStateDemoState extends State<FavoriteStateDemo> {
     onToggle: (code) => setState(() {
       if (!favorites.add(code)) favorites.remove(code);
     }),
+  );
+}
+
+class FavoriteCounterNotifierDemo extends StatefulWidget {
+  const FavoriteCounterNotifierDemo({super.key});
+  @override
+  State<FavoriteCounterNotifierDemo> createState() =>
+      _FavoriteCounterNotifierDemoState();
+}
+
+class _FavoriteCounterNotifierDemoState
+    extends State<FavoriteCounterNotifierDemo> {
+  final ValueNotifier<int> favoriteCounter = ValueNotifier<int>(0);
+  @override
+  void dispose() {
+    favoriteCounter.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          const Text('ValueNotifier Demo'),
+          ValueListenableBuilder<int>(
+            valueListenable: favoriteCounter,
+            builder: (context, value, child) =>
+                Text('Counter favorite: $value'),
+          ),
+          Wrap(
+            spacing: 8,
+            children: [
+              TextButton(
+                onPressed: () => favoriteCounter.value++,
+                child: const Text('Tambah'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (favoriteCounter.value > 0) favoriteCounter.value--;
+                },
+                child: const Text('Kurangi'),
+              ),
+              TextButton(
+                onPressed: () => favoriteCounter.value = 0,
+                child: const Text('Reset'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
   );
 }
