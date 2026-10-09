@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'services/course_service.dart';
+import 'repositories/course_repository.dart';
 import 'services/student_service.dart';
 
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ void main() {
 
 Future<Map<String, dynamic>> loadStudentData() async {
   final student = await StudentService().loadStudent();
-  final courses = await CourseService().loadCourses();
+  final courses = await CourseRepository(CourseService()).getCourses();
   return {'student': student, 'courses': courses};
 }
 
