@@ -100,8 +100,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   int currentIndex = 0;
 
-  final Set<String> favoriteCourses = {};
-
   final feedbackFormKey = GlobalKey<FormState>();
 
   String feedbackName = studentName;
@@ -281,6 +279,9 @@ class _DashboardPageState extends State<DashboardPage> {
         children: [
           const IdentityCard(),
           const SizedBox(height: 12),
+          Text(
+            'Jumlah favorite: ${context.watch<CourseProvider>().favorites.length}',
+          ),
           const ChangeNotifierDemo(),
           const LocalStateDemo(),
           const FavoriteStateDemo(),
@@ -348,6 +349,7 @@ class _DashboardPageState extends State<DashboardPage> {
   // course
 
   Widget _buildCoursesPage({required List<Map<String, dynamic>> courses}) {
+    final favoriteCount = context.watch<CourseProvider>().favorites.length;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -358,7 +360,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 16),
 
           Text(
-            'Daftar Course',
+            'Daftar Course • Favorite: $favoriteCount',
             style: Theme.of(context).textTheme.titleLarge
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
@@ -504,63 +506,36 @@ class _DashboardPageState extends State<DashboardPage> {
   // course card
 
   Widget _buildCourseCard(Map<String, dynamic> course) {
-    final status = course['status'] as String;
-
-    final statusInfo = _statusInfo(status);
-
+    final statusInfo = _statusInfo(course['status'] as String);
     final courseCode = course['code'] as String;
-
-    final isFavorite = favoriteCourses.contains(courseCode);
-
     return GestureDetector(
-      // long press
-      onLongPress: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${course['title']} • '
-              '${course['code']} • '
-              '${course['credits']} SKS',
-            ),
+      onLongPress: () => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${course['title']} • $courseCode • ${course['credits']} SKS',
           ),
-        );
-      },
-
+        ),
+      ),
       child: Card(
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
-
         child: InkWell(
-          // open detail
           onTap: () async {
-            if (isNavigating) {
-              return;
-            }
-
-            setState(() {
-              isNavigating = true;
-            });
-
+            if (isNavigating) return;
+            setState(() => isNavigating = true);
             final result = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
                 builder: (_) => CourseDetailPage(course: course),
               ),
             );
-
-            if (!mounted) {
-              return;
-            }
-
-            setState(() {
-              isNavigating = false;
-            });
-
+            if (!mounted) return;
+            setState(() => isNavigating = false);
             if (result == true) {
-              setState(() {
-                favoriteCourses.add(courseCode);
-              });
-
+              final provider = context.read<CourseProvider>();
+              if (!provider.isFavorite(courseCode)) {
+                provider.toggleFavorite(courseCode);
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('${course['title']} ditambahkan ke favorite'),
@@ -568,48 +543,37 @@ class _DashboardPageState extends State<DashboardPage> {
               );
             }
           },
-
           child: ListTile(
             leading: Icon(statusInfo.icon, color: statusInfo.color),
-
             title: Text(
               course['title'] as String,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
-
-            subtitle: Text(
-              '${course['code']} • '
-              '${course['credits']} SKS',
-            ),
-
-            trailing: IconButton(
-              tooltip: isFavorite
-                  ? 'Hapus dari favorite'
-                  : 'Tambahkan ke favorite',
-
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : null,
-              ),
-
-              // favorite
-              onPressed: () {
-                setState(() {
-                  if (isFavorite) {
-                    favoriteCourses.remove(courseCode);
-                  } else {
-                    favoriteCourses.add(courseCode);
-                  }
-                });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isFavorite
-                          ? '${course['title']} dihapus dari favorite'
-                          : '${course['title']} ditambahkan ke favorite',
-                    ),
+            subtitle: Text('$courseCode • ${course['credits']} SKS'),
+            // watch membaca jumlah pada halaman, Consumer mendengar ikon, read menjalankan aksi.
+            trailing: Consumer<CourseProvider>(
+              builder: (context, provider, child) {
+                final isFavorite = provider.isFavorite(courseCode);
+                return IconButton(
+                  tooltip: isFavorite
+                      ? 'Hapus dari favorite'
+                      : 'Tambahkan ke favorite',
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : null,
                   ),
+                  onPressed: () {
+                    context.read<CourseProvider>().toggleFavorite(courseCode);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isFavorite
+                              ? '${course['title']} dihapus dari favorite'
+                              : '${course['title']} ditambahkan ke favorite',
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
