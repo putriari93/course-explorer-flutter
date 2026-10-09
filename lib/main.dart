@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 
 import 'providers/course_provider.dart';
+import 'models/course.dart';
 
 const String studentName = 'Putri Ari Laksmi';
 const String studentId = '2415051091';
@@ -204,10 +205,11 @@ class _DashboardPageState extends State<DashboardPage> {
         final student = data['student'] as Map<String, dynamic>;
 
         final courses = (data['courses'] as List<dynamic>)
-            .cast<Map<String, dynamic>>();
+            .map((json) => Course.fromJson(json as Map<String, dynamic>))
+            .toList();
 
         final completedCount = courses
-            .where((course) => course['status'] == 'done')
+            .where((course) => course.status == 'done')
             .length;
 
         final pages = [
@@ -266,7 +268,7 @@ class _DashboardPageState extends State<DashboardPage> {
   // home
 
   Widget _buildHomePage({
-    required List<Map<String, dynamic>> courses,
+    required List<Course> courses,
     required int completedCount,
     required Size size,
     required Orientation orientation,
@@ -348,7 +350,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // course
 
-  Widget _buildCoursesPage({required List<Map<String, dynamic>> courses}) {
+  Widget _buildCoursesPage({required List<Course> courses}) {
     final favoriteCount = context.watch<CourseProvider>().favorites.length;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -474,7 +476,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // grid course
 
-  Widget _buildCourseGrid(List<Map<String, dynamic>> courses) {
+  Widget _buildCourseGrid(List<Course> courses) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = columnsFor(constraints.maxWidth);
@@ -505,14 +507,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // course card
 
-  Widget _buildCourseCard(Map<String, dynamic> course) {
-    final statusInfo = _statusInfo(course['status'] as String);
-    final courseCode = course['code'] as String;
+  Widget _buildCourseCard(Course course) {
+    final statusInfo = _statusInfo(course.status);
+    final courseCode = course.code;
     return GestureDetector(
       onLongPress: () => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${course['title']} • $courseCode • ${course['credits']} SKS',
+            '${course.title} • $courseCode • ${course.credits} SKS',
           ),
         ),
       ),
@@ -538,7 +540,7 @@ class _DashboardPageState extends State<DashboardPage> {
               }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${course['title']} ditambahkan ke favorite'),
+                  content: Text('${course.title} ditambahkan ke favorite'),
                 ),
               );
             }
@@ -546,10 +548,10 @@ class _DashboardPageState extends State<DashboardPage> {
           child: ListTile(
             leading: Icon(statusInfo.icon, color: statusInfo.color),
             title: Text(
-              course['title'] as String,
+              course.title,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
-            subtitle: Text('$courseCode • ${course['credits']} SKS'),
+            subtitle: Text('$courseCode • ${course.credits} SKS'),
             // watch membaca jumlah pada halaman, Consumer mendengar ikon, read menjalankan aksi.
             trailing: Consumer<CourseProvider>(
               builder: (context, provider, child) {
@@ -568,8 +570,8 @@ class _DashboardPageState extends State<DashboardPage> {
                       SnackBar(
                         content: Text(
                           isFavorite
-                              ? '${course['title']} dihapus dari favorite'
-                              : '${course['title']} ditambahkan ke favorite',
+                              ? '${course.title} dihapus dari favorite'
+                              : '${course.title} ditambahkan ke favorite',
                         ),
                       ),
                     );
@@ -882,7 +884,7 @@ class _DashboardPageState extends State<DashboardPage> {
 // course detail
 
 class CourseDetailPage extends StatelessWidget {
-  final Map<String, dynamic> course;
+  final Course course;
 
   const CourseDetailPage({super.key, required this.course});
 
@@ -900,21 +902,21 @@ class CourseDetailPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             Text(
-              course['title'] as String,
+              course.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 12),
 
-            Text('Kode: ${course['code']}'),
+            Text('Kode: ${course.code}'),
 
             const SizedBox(height: 8),
 
-            Text('SKS: ${course['credits']}'),
+            Text('SKS: ${course.credits}'),
 
             const SizedBox(height: 8),
 
-            Text('Status: ${course['status']}'),
+            Text('Status: ${course.status}'),
 
             const SizedBox(height: 24),
 
