@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Learning Dashboard',
+      title: 'Course Explorer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
@@ -37,21 +37,86 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// identity card
+
+class IdentityCard extends StatelessWidget {
+  const IdentityCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 22,
+              backgroundColor:
+                  Theme.of(context)
+                      .colorScheme
+                      .primaryContainer,
+              child: Icon(
+                Icons.badge_outlined,
+                color:
+                    Theme.of(context)
+                        .colorScheme
+                        .onPrimaryContainer,
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            const Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    studentName,
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+
+                  SizedBox(height: 3),
+
+                  Text(
+                    'NIM: $studentId',
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() =>
+      _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  late Future<Map<String, dynamic>> studentFuture;
+class _DashboardPageState
+    extends State<DashboardPage> {
+  late Future<Map<String, dynamic>>
+      studentFuture;
 
   int currentIndex = 0;
 
   final Set<String> favoriteCourses = {};
 
-  final feedbackFormKey = GlobalKey<FormState>();
+  final feedbackFormKey =
+      GlobalKey<FormState>();
 
   String feedbackName = studentName;
   String feedbackNim = studentId;
@@ -106,11 +171,9 @@ class _DashboardPageState extends State<DashboardPage> {
         });
       },
       labelType: NavigationRailLabelType.all,
+      groupAlignment: -1.0,
       destinations: const [
-        NavigationRailDestination(
-          icon: Icon(Icons.home),
-          label: Text('Home'),
-        ),
+        NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
         NavigationRailDestination(
           icon: Icon(Icons.school),
           label: Text('Courses'),
@@ -125,23 +188,35 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final orientation = MediaQuery.of(context).orientation;
-    final layoutType = size.width < 600 ? 'Compact' : 'Wide';
+    final size =
+        MediaQuery.of(context).size;
+
+    final orientation =
+        MediaQuery.of(context).orientation;
+
+    final layoutType =
+        size.width < 600
+            ? 'Compact'
+            : size.width < 840
+                ? 'Medium'
+                : 'Expanded';
 
     final pageTitles = [
-      'Learning Dashboard',
+      'Course Explorer',
       'Courses',
       'Profile',
     ];
 
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<
+        Map<String, dynamic>>(
       future: studentFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState ==
+            ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child:
+                  CircularProgressIndicator(),
             ),
           );
         }
@@ -150,10 +225,14 @@ class _DashboardPageState extends State<DashboardPage> {
           return Scaffold(
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding:
+                    const EdgeInsets.all(
+                  24,
+                ),
                 child: Text(
                   'Gagal memuat data: ${snapshot.error}',
-                  textAlign: TextAlign.center,
+                  textAlign:
+                      TextAlign.center,
                 ),
               ),
             ),
@@ -163,15 +242,20 @@ class _DashboardPageState extends State<DashboardPage> {
         final data = snapshot.data!;
 
         final student =
-            data['student'] as Map<String, dynamic>;
+            data['student']
+                as Map<String, dynamic>;
 
         final courses =
-            (data['courses'] as List<dynamic>)
-                .cast<Map<String, dynamic>>();
+            (data['courses']
+                    as List<dynamic>)
+                .cast<
+                    Map<String, dynamic>>();
 
         final completedCount = courses
             .where(
-              (course) => course['status'] == 'done',
+              (course) =>
+                  course['status'] ==
+                  'done',
             )
             .length;
 
@@ -179,7 +263,8 @@ class _DashboardPageState extends State<DashboardPage> {
           _buildHomePage(
             student: student,
             courses: courses,
-            completedCount: completedCount,
+            completedCount:
+                completedCount,
             size: size,
             orientation: orientation,
             layoutType: layoutType,
@@ -197,51 +282,31 @@ class _DashboardPageState extends State<DashboardPage> {
             if (constraints.maxWidth < 840) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(
-                    pageTitles[currentIndex],
-                  ),
-                  backgroundColor:
-                      Theme.of(context)
-                          .colorScheme
-                          .primary,
-                  foregroundColor:
-                      Theme.of(context)
-                          .colorScheme
-                          .onPrimary,
+                  title: Text(pageTitles[currentIndex]),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
-                body: SafeArea(
-                  child: pages[currentIndex],
-                ),
-                bottomNavigationBar:
-                    _buildNavigationBar(),
+                body: SafeArea(child: pages[currentIndex]),
+                bottomNavigationBar: _buildNavigationBar(),
               );
             }
 
             return Scaffold(
               appBar: AppBar(
-                title: Text(
-                  pageTitles[currentIndex],
-                ),
-                backgroundColor:
-                    Theme.of(context)
-                        .colorScheme
-                        .primary,
-                foregroundColor:
-                    Theme.of(context)
-                        .colorScheme
-                        .onPrimary,
+                title: Text(pageTitles[currentIndex]),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               body: SafeArea(
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildNavigationRail(),
 
-                    const VerticalDivider(
-                      width: 1,
-                    ),
+                    const VerticalDivider(width: 1),
 
                     Expanded(
-                      child: pages[currentIndex],
+                      child: SizedBox.expand(child: pages[currentIndex]),
                     ),
                   ],
                 ),
@@ -256,8 +321,10 @@ class _DashboardPageState extends State<DashboardPage> {
   // home
 
   Widget _buildHomePage({
-    required Map<String, dynamic> student,
-    required List<Map<String, dynamic>> courses,
+    required Map<String, dynamic>
+        student,
+    required List<Map<String, dynamic>>
+        courses,
     required int completedCount,
     required Size size,
     required Orientation orientation,
@@ -269,23 +336,33 @@ class _DashboardPageState extends State<DashboardPage> {
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
         children: [
+          const IdentityCard(),
+
+          const SizedBox(height: 12),
+
           Card(
             child: Padding(
               padding:
-                  const EdgeInsets.all(16),
+                  const EdgeInsets.all(
+                16,
+              ),
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    CrossAxisAlignment
+                        .start,
                 children: [
                   const Text(
-                    '$studentId - $studentName',
+                    'Informasi Layar',
                     style: TextStyle(
                       fontWeight:
                           FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
                   Text(
                     'Width: ${size.width.toStringAsFixed(0)}',
@@ -327,18 +404,20 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     '${courses.length}',
                 label: 'Topik',
-                icon:
-                    Icons.menu_book_rounded,
+                icon: Icons
+                    .menu_book_rounded,
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(
+                width: 12,
+              ),
 
               _buildSummaryCard(
                 value:
                     '$completedCount',
                 label: 'Selesai',
-                icon:
-                    Icons.task_alt_rounded,
+                icon: Icons
+                    .task_alt_rounded,
               ),
             ],
           ),
@@ -350,7 +429,8 @@ class _DashboardPageState extends State<DashboardPage> {
   // course
 
   Widget _buildCoursesPage({
-    required List<Map<String, dynamic>> courses,
+    required List<Map<String, dynamic>>
+        courses,
   }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -358,13 +438,7 @@ class _DashboardPageState extends State<DashboardPage> {
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            '$studentId - $studentName',
-            style: TextStyle(
-              fontWeight:
-                  FontWeight.bold,
-            ),
-          ),
+          const IdentityCard(),
 
           const SizedBox(height: 16),
 
@@ -390,7 +464,8 @@ class _DashboardPageState extends State<DashboardPage> {
   // profile
 
   Widget _buildProfilePage({
-    required Map<String, dynamic> student,
+    required Map<String, dynamic>
+        student,
   }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -419,7 +494,8 @@ class _DashboardPageState extends State<DashboardPage> {
   ) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         child: Row(
           children: [
             CircleAvatar(
@@ -442,23 +518,29 @@ class _DashboardPageState extends State<DashboardPage> {
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    CrossAxisAlignment
+                        .start,
                 children: [
                   Text(
                     'NIM: ${student['nim']}',
-                    style: const TextStyle(
+                    style:
+                        const TextStyle(
                       fontWeight:
                           FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 4,
+                  ),
 
                   Text(
                     'Nama: ${student['name']}',
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 4,
+                  ),
 
                   Text(
                     student['semester']
@@ -518,15 +600,16 @@ class _DashboardPageState extends State<DashboardPage> {
   // grid course
 
   Widget _buildCourseGrid(
-    List<Map<String, dynamic>> courses,
+    List<Map<String, dynamic>>
+        courses,
   ) {
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder:
+          (context, constraints) {
         return GridView.builder(
           shrinkWrap: true,
           physics:
               const NeverScrollableScrollPhysics(),
-
           gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount:
@@ -537,9 +620,7 @@ class _DashboardPageState extends State<DashboardPage> {
             mainAxisSpacing: 12,
             childAspectRatio: 2.8,
           ),
-
           itemCount: courses.length,
-
           itemBuilder:
               (context, index) {
             return _buildCourseCard(
@@ -593,7 +674,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // open detail
           onTap: () async {
             final result =
-                await Navigator.push<bool>(
+                await Navigator.push<
+                    bool>(
               context,
               MaterialPageRoute(
                 builder: (_) =>
@@ -611,8 +693,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 );
               });
 
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(
                 SnackBar(
                   content: Text(
                     '${course['title']} ditambahkan ke favorite',
@@ -630,8 +713,10 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
             title: Text(
-              course['title'] as String,
-              style: const TextStyle(
+              course['title']
+                  as String,
+              style:
+                  const TextStyle(
                 fontWeight:
                     FontWeight.w600,
               ),
@@ -650,7 +735,8 @@ class _DashboardPageState extends State<DashboardPage> {
               icon: Icon(
                 isFavorite
                     ? Icons.favorite
-                    : Icons.favorite_border,
+                    : Icons
+                        .favorite_border,
                 color: isFavorite
                     ? Colors.red
                     : null,
@@ -660,18 +746,21 @@ class _DashboardPageState extends State<DashboardPage> {
               onPressed: () {
                 setState(() {
                   if (isFavorite) {
-                    favoriteCourses.remove(
+                    favoriteCourses
+                        .remove(
                       courseCode,
                     );
                   } else {
-                    favoriteCourses.add(
+                    favoriteCourses
+                        .add(
                       courseCode,
                     );
                   }
                 });
 
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(
                   SnackBar(
                     content: Text(
                       isFavorite
@@ -708,15 +797,9 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
-            const Text(
-              '$studentId - $studentName',
-              style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
-              ),
-            ),
+            const IdentityCard(),
 
             const SizedBox(height: 16),
 
@@ -816,20 +899,15 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
-              const Text(
-                '$studentId - $studentName',
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.bold,
-                ),
-              ),
+              const IdentityCard(),
 
               const SizedBox(height: 16),
 
               TextFormField(
-                initialValue: studentName,
+                initialValue:
+                    studentName,
                 decoration:
                     const InputDecoration(
                   labelText: 'Nama',
@@ -855,7 +933,8 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(height: 16),
 
               TextFormField(
-                initialValue: studentId,
+                initialValue:
+                    studentId,
                 decoration:
                     const InputDecoration(
                   labelText: 'NIM',
@@ -884,7 +963,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 maxLines: 4,
                 decoration:
                     const InputDecoration(
-                  labelText: 'Komentar',
+                  labelText:
+                      'Komentar',
                   hintText:
                       'Masukkan komentar minimal 5 karakter',
                   border:
@@ -929,7 +1009,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               }
 
                               final confirm =
-                                  await showDialog<bool>(
+                                  await showDialog<
+                                      bool>(
                                 context:
                                     context,
                                 builder:
@@ -989,7 +1070,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                     true;
                               });
 
-                              await Future.delayed(
+                              await Future
+                                  .delayed(
                                 const Duration(
                                   seconds: 1,
                                 ),
@@ -1058,15 +1140,17 @@ class _DashboardPageState extends State<DashboardPage> {
                   width:
                       double.infinity,
                   padding:
-                      const EdgeInsets.all(
-                    12,
-                  ),
+                      const EdgeInsets
+                          .all(12),
                   decoration:
                       BoxDecoration(
                     color:
-                        Colors.blue.shade50,
+                        Colors
+                            .blue
+                            .shade50,
                     borderRadius:
-                        BorderRadius.circular(
+                        BorderRadius
+                            .circular(
                       8,
                     ),
                   ),
@@ -1133,7 +1217,6 @@ class CourseDetailPage
         title:
             const Text('Detail Course'),
       ),
-
       body: SingleChildScrollView(
         padding:
             const EdgeInsets.all(24),
@@ -1141,14 +1224,7 @@ class CourseDetailPage
           crossAxisAlignment:
               CrossAxisAlignment.start,
           children: [
-            const Text(
-              '$studentId - $studentName',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight:
-                    FontWeight.bold,
-              ),
-            ),
+            const IdentityCard(),
 
             const SizedBox(height: 24),
 
@@ -1268,15 +1344,9 @@ class CompactLayout
           crossAxisAlignment:
               CrossAxisAlignment.start,
           children: const [
-            Text(
-              '$studentId - $studentName',
-              style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
-              ),
-            ),
+            IdentityCard(),
 
-            SizedBox(height: 8),
+            SizedBox(height: 12),
 
             Text(
               'Kategori Layout: Compact',
@@ -1307,39 +1377,29 @@ class MediumLayout
       child: Padding(
         padding:
             const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: const [
-            Icon(
-              Icons.tablet_android,
-              size: 36,
-            ),
+            IdentityCard(),
 
-            SizedBox(width: 16),
+            SizedBox(height: 12),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
-                children: [
-                  Text(
-                    '$studentId - $studentName',
-                    style: TextStyle(
-                      fontWeight:
-                          FontWeight
-                              .bold,
-                    ),
-                  ),
+            Row(
+              children: [
+                Icon(
+                  Icons.tablet_android,
+                  size: 36,
+                ),
 
-                  SizedBox(
-                    height: 8,
-                  ),
+                SizedBox(width: 16),
 
-                  Text(
+                Expanded(
+                  child: Text(
                     'Kategori Layout: Medium',
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -1360,24 +1420,29 @@ class ExpandedLayout
       child: Padding(
         padding:
             const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: const [
-            Icon(
-              Icons.desktop_windows,
-              size: 40,
-            ),
+            IdentityCard(),
 
-            SizedBox(width: 20),
+            SizedBox(height: 12),
 
-            Expanded(
-              child: Text(
-                '$studentId - $studentName\n'
-                'Kategori Layout: Expanded',
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.bold,
+            Row(
+              children: [
+                Icon(
+                  Icons.desktop_windows,
+                  size: 40,
                 ),
-              ),
+
+                SizedBox(width: 20),
+
+                Expanded(
+                  child: Text(
+                    'Kategori Layout: Expanded',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -1413,13 +1478,7 @@ class FlexibleLayoutDemo
           crossAxisAlignment:
               CrossAxisAlignment.start,
           children: [
-            const Text(
-              '$studentId - $studentName',
-              style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
-              ),
-            ),
+            const IdentityCard(),
 
             const SizedBox(height: 16),
 
@@ -1431,8 +1490,10 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color: Colors
-                        .blue.shade100,
+                    color:
+                        Colors
+                            .blue
+                            .shade100,
                     child: const Text(
                       'Panel A\nFlex 2',
                       textAlign:
@@ -1449,8 +1510,10 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color: Colors
-                        .orange.shade100,
+                    color:
+                        Colors
+                            .orange
+                            .shade100,
                     child: const Text(
                       'Panel B\nFlex 1',
                       textAlign:
