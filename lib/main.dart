@@ -116,6 +116,19 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   const SizedBox(height: 12),
 
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DetailPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Buka Detail'),
+                  ),
+                  const SizedBox(height: 12),
+
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -387,6 +400,48 @@ class _DashboardPageState extends State<DashboardPage> {
           color: Colors.grey,
         );
     }
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Detail Page'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '$studentId - $studentName',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Ini adalah halaman detail.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Kembali'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
