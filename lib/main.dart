@@ -49,6 +49,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   int currentIndex = 0;
 
+  final Set<String> favoriteCourses = {};
+
   @override
   void initState() {
     super.initState();
@@ -273,6 +275,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 8),
 
                   Text(
@@ -349,7 +352,8 @@ class _DashboardPageState extends State<DashboardPage> {
           const Text(
             '$studentId - $studentName',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight:
+                  FontWeight.bold,
             ),
           ),
 
@@ -514,8 +518,8 @@ class _DashboardPageState extends State<DashboardPage> {
               SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount:
                 columnsFor(
-                  constraints.maxWidth,
-                ),
+              constraints.maxWidth,
+            ),
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 2.8,
@@ -545,58 +549,126 @@ class _DashboardPageState extends State<DashboardPage> {
     final statusInfo =
         _statusInfo(status);
 
-    return Card(
-      margin: EdgeInsets.zero,
-      child: ListTile(
-        onTap: () async {
-          final result =
-              await Navigator.push<bool>(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  CourseDetailPage(
-                course: course,
-              ),
-            ),
-          );
+    final courseCode =
+        course['code'] as String;
 
-          if (result == true &&
-              mounted) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${course['title']} ditambahkan ke favorite',
+    final isFavorite =
+        favoriteCourses.contains(
+      courseCode,
+    );
+
+    return GestureDetector(
+      // long press
+      onLongPress: () {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+          SnackBar(
+            content: Text(
+              '${course['title']} • '
+              '${course['code']} • '
+              '${course['credits']} SKS',
+            ),
+          ),
+        );
+      },
+
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+
+        child: InkWell(
+          // open detail
+          onTap: () async {
+            final result =
+                await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    CourseDetailPage(
+                  course: course,
                 ),
               ),
             );
-          }
-        },
 
-        leading: Icon(
-          statusInfo.icon,
-          color: statusInfo.color,
-        ),
+            if (result == true &&
+                mounted) {
+              setState(() {
+                favoriteCourses.add(
+                  courseCode,
+                );
+              });
 
-        title: Text(
-          course['title'] as String,
-          style: const TextStyle(
-            fontWeight:
-                FontWeight.w600,
-          ),
-        ),
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '${course['title']} ditambahkan ke favorite',
+                  ),
+                ),
+              );
+            }
+          },
 
-        subtitle: Text(
-          '${course['code']} • ${course['credits']} SKS',
-        ),
+          child: ListTile(
+            leading: Icon(
+              statusInfo.icon,
+              color:
+                  statusInfo.color,
+            ),
 
-        trailing: Text(
-          statusInfo.label,
-          style: TextStyle(
-            color:
-                statusInfo.color,
-            fontWeight:
-                FontWeight.bold,
+            title: Text(
+              course['title'] as String,
+              style: const TextStyle(
+                fontWeight:
+                    FontWeight.w600,
+              ),
+            ),
+
+            subtitle: Text(
+              '${course['code']} • '
+              '${course['credits']} SKS',
+            ),
+
+            trailing: IconButton(
+              tooltip: isFavorite
+                  ? 'Hapus dari favorite'
+                  : 'Tambahkan ke favorite',
+
+              icon: Icon(
+                isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: isFavorite
+                    ? Colors.red
+                    : null,
+              ),
+
+              // favorite
+              onPressed: () {
+                setState(() {
+                  if (isFavorite) {
+                    favoriteCourses.remove(
+                      courseCode,
+                    );
+                  } else {
+                    favoriteCourses.add(
+                      courseCode,
+                    );
+                  }
+                });
+
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isFavorite
+                          ? '${course['title']} dihapus dari favorite'
+                          : '${course['title']} ditambahkan ke favorite',
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
