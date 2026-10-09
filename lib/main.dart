@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'providers/course_provider.dart';
+
 const String studentName = 'Putri Ari Laksmi';
 const String studentId = '2415051091';
 
@@ -272,6 +274,7 @@ class _DashboardPageState extends State<DashboardPage> {
         children: [
           const IdentityCard(),
           const SizedBox(height: 12),
+          const ChangeNotifierDemo(),
           const LocalStateDemo(),
           const FavoriteStateDemo(),
           const FavoriteCounterNotifierDemo(),
@@ -1377,6 +1380,41 @@ class _FavoriteCounterNotifierDemoState
             ],
           ),
         ],
+      ),
+    ),
+  );
+}
+
+class ChangeNotifierDemo extends StatefulWidget {
+  const ChangeNotifierDemo({super.key});
+  @override
+  State<ChangeNotifierDemo> createState() => _ChangeNotifierDemoState();
+}
+
+class _ChangeNotifierDemoState extends State<ChangeNotifierDemo> {
+  final CourseProvider courseProvider = CourseProvider();
+  @override
+  void dispose() {
+    courseProvider.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: courseProvider,
+    builder: (context, child) => Card(
+      child: ListTile(
+        title: const Text('ChangeNotifier Demo'),
+        subtitle: Text('Favorite: ${courseProvider.favorites.length}'),
+        trailing: IconButton(
+          tooltip: 'Toggle ChangeNotifier demo',
+          onPressed: () => courseProvider.toggleFavorite('MOB01'),
+          icon: Icon(
+            courseProvider.isFavorite('MOB01')
+                ? Icons.favorite
+                : Icons.favorite_border,
+          ),
+        ),
       ),
     ),
   );
