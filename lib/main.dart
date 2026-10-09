@@ -1,0 +1,261 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+const String studentName = 'Putri Ari Laksmi';
+const String studentId = '2415051091';
+
+void main() {
+  runApp(const MyApp());
+}
+
+Future<Map<String, dynamic>> loadStudentData() async {
+  final jsonString = await rootBundle.loadString(
+    'assets/data/student_data.json',
+  );
+  return jsonDecode(jsonString) as Map<String, dynamic>;
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Learning Dashboard',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: const DashboardPage(),
+    );
+  }
+}
+
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  late Future<Map<String, dynamic>> studentFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    studentFuture = loadStudentData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Learning Dashboard'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: SafeArea(
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: studentFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'Gagal memuat data: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+
+            final data = snapshot.data!;
+            final student = data['student'] as Map<String, dynamic>;
+            final courses = (data['courses'] as List<dynamic>)
+                .cast<Map<String, dynamic>>();
+            final completedCount =
+                courses.where((course) => course['status'] == 'done').length;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildProfileCard(student),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _buildSummaryCard(
+                        value: '${courses.length}',
+                        label: 'Topik',
+                        icon: Icons.menu_book_rounded,
+                      ),
+                      const SizedBox(width: 12),
+                      _buildSummaryCard(
+                        value: '$completedCount',
+                        label: 'Selesai',
+                        icon: Icons.task_alt_rounded,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Daftar Materi',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  ...courses.map(_buildCourseCard),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Data list dimuat dari JSON statik',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileCard(Map<String, dynamic> student) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              child: Icon(
+                Icons.person,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'NIM: ${student['nim']}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text('Nama: ${student['name']}'),
+                  const SizedBox(height: 4),
+                  Text(student['semester'] as String),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({
+    required String value,
+    required String label,
+    required IconData icon,
+  }) {
+    return Expanded(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          child: Column(
+            children: [
+              Icon(icon),
+              const SizedBox(height: 6),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(label, textAlign: TextAlign.center),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCourseCard(Map<String, dynamic> course) {
+    final status = course['status'] as String;
+    final statusInfo = _statusInfo(status);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        leading: Icon(statusInfo.icon, color: statusInfo.color),
+        title: Text(
+          course['title'] as String,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${course['code']} • ${course['credits']} SKS',
+        ),
+        trailing: Text(
+          statusInfo.label,
+          style: TextStyle(
+            color: statusInfo.color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  _StatusInfo _statusInfo(String status) {
+    switch (status) {
+      case 'done':
+        return const _StatusInfo(
+          label: 'Selesai',
+          icon: Icons.menu_book_rounded,
+          color: Colors.green,
+        );
+      case 'active':
+        return const _StatusInfo(
+          label: 'Aktif',
+          icon: Icons.menu_book_rounded,
+          color: Colors.orange,
+        );
+      default:
+        return const _StatusInfo(
+          label: 'Rencana',
+          icon: Icons.menu_book_rounded,
+          color: Colors.grey,
+        );
+    }
+  }
+}
+
+class _StatusInfo {
+  const _StatusInfo({
+    required this.label,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+}
