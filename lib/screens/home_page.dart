@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../debug/state_debug_lab.dart';
 import '../widgets/course_grid.dart';
 import '../providers/course_provider.dart';
 import '../widgets/identity_card.dart';
@@ -57,6 +59,16 @@ class HomePage extends StatelessWidget {
             CourseGrid(courses: courses, showFavorite: false, showStatus: true),
           const SizedBox(height: 12),
           const ResponsiveLayoutDemo(),
+          if (kDebugMode) ...[
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const StateDebugLab()),
+              ),
+              icon: const Icon(Icons.bug_report_outlined),
+              label: const Text('State Debug Lab'),
+            ),
+          ],
         ],
       ),
     );
