@@ -116,19 +116,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   const SizedBox(height: 12),
 
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DetailPage(),
-                        ),
-                      );
-                    },
-                    child: const Text('Buka Detail'),
-                  ),
-                  const SizedBox(height: 12),
-
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -294,14 +281,18 @@ class _DashboardPageState extends State<DashboardPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CourseDetailPage(course: course)),
+          );
+        },
         leading: Icon(statusInfo.icon, color: statusInfo.color),
         title: Text(
           course['title'] as String,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Text(
-          '${course['code']} • ${course['credits']} SKS',
-        ),
+        subtitle: Text('${course['code']} • ${course['credits']} SKS'),
         trailing: Text(
           statusInfo.label,
           style: TextStyle(
@@ -403,42 +394,70 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-class DetailPage extends StatelessWidget {
-  const DetailPage({super.key});
+class CourseDetailPage extends StatelessWidget {
+  final Map<String, dynamic> course;
+
+  const CourseDetailPage({
+    super.key,
+    required this.course,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Page'),
+        title: const Text('Detail Course'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '$studentId - $studentName',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '$studentId - $studentName',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Ini adalah halaman detail.',
-                textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 24),
+
+            Text(
+              course['title'] as String,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Kembali'),
-              ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 12),
+
+            Text(
+              'Kode: ${course['code']}',
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              'SKS: ${course['credits']}',
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              'Status: ${course['status']}',
+            ),
+
+            const SizedBox(height: 24),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Kembali'),
+            ),
+          ],
         ),
       ),
     );
