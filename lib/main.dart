@@ -131,6 +131,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   const SizedBox(height: 12),
 
+                  const ResponsiveLayoutDemo(),
+                  const SizedBox(height: 12),
+
                   _buildProfileCard(student),
                   const SizedBox(height: 12),
                   Row(
@@ -287,6 +290,108 @@ class _DashboardPageState extends State<DashboardPage> {
           color: Colors.grey,
         );
     }
+  }
+}
+
+class ResponsiveLayoutDemo extends StatelessWidget {
+  const ResponsiveLayoutDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 600) {
+          return const CompactLayout();
+        } else if (constraints.maxWidth < 840) {
+          return const MediumLayout();
+        } else {
+          return const ExpandedLayout();
+        }
+      },
+    );
+  }
+}
+
+class CompactLayout extends StatelessWidget {
+  const CompactLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              '$studentId - $studentName',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('Kategori Layout: Compact'),
+            SizedBox(height: 8),
+            Icon(Icons.phone_android, size: 36),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MediumLayout extends StatelessWidget {
+  const MediumLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: const [
+            Icon(Icons.tablet_android, size: 36),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$studentId - $studentName',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Kategori Layout: Medium'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ExpandedLayout extends StatelessWidget {
+  const ExpandedLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: const [
+            Icon(Icons.desktop_windows, size: 40),
+            SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                '$studentId - $studentName\nKategori Layout: Expanded',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
