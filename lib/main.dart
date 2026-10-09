@@ -273,6 +273,12 @@ class _DashboardPageState extends State<DashboardPage> {
           const IdentityCard(),
           const SizedBox(height: 12),
           const LocalStateDemo(),
+          FavoritePropDrillingDemo(
+            favoriteCourses: favoriteCourses,
+            onToggle: (code) => setState(() {
+              if (!favoriteCourses.add(code)) favoriteCourses.remove(code);
+            }),
+          ),
 
           const SizedBox(height: 12),
 
@@ -1233,4 +1239,78 @@ class _LocalStateDemoState extends State<LocalStateDemo> {
       ),
     ),
   );
+}
+
+class FavoritePropDrillingDemo extends StatelessWidget {
+  // Data dan callback diteruskan lewat constructor sampai tile (dua level).
+  const FavoritePropDrillingDemo({
+    super.key,
+    required this.favoriteCourses,
+    required this.onToggle,
+  });
+  final Set<String> favoriteCourses;
+  final ValueChanged<String> onToggle;
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          const Text('Favorite Prop Drilling Demo'),
+          FavoriteCourseListDemo(
+            favoriteCourses: favoriteCourses,
+            onToggle: onToggle,
+          ),
+          FavoriteSummaryDemo(favoriteCourses: favoriteCourses),
+        ],
+      ),
+    ),
+  );
+}
+
+class FavoriteCourseListDemo extends StatelessWidget {
+  const FavoriteCourseListDemo({
+    super.key,
+    required this.favoriteCourses,
+    required this.onToggle,
+  });
+  final Set<String> favoriteCourses;
+  final ValueChanged<String> onToggle;
+  @override
+  Widget build(BuildContext context) => FavoriteCourseTileDemo(
+    favoriteCourses: favoriteCourses,
+    onToggle: onToggle,
+  );
+}
+
+class FavoriteCourseTileDemo extends StatelessWidget {
+  const FavoriteCourseTileDemo({
+    super.key,
+    required this.favoriteCourses,
+    required this.onToggle,
+  });
+  final Set<String> favoriteCourses;
+  final ValueChanged<String> onToggle;
+  @override
+  Widget build(BuildContext context) => ListTile(
+    title: const Text('Git & GitHub'),
+    subtitle: const Text('MOB01'),
+    trailing: IconButton(
+      tooltip: 'Toggle favorite demo',
+      onPressed: () => onToggle('MOB01'),
+      icon: Icon(
+        favoriteCourses.contains('MOB01')
+            ? Icons.favorite
+            : Icons.favorite_border,
+      ),
+    ),
+  );
+}
+
+class FavoriteSummaryDemo extends StatelessWidget {
+  const FavoriteSummaryDemo({super.key, required this.favoriteCourses});
+  final Set<String> favoriteCourses;
+  @override
+  Widget build(BuildContext context) =>
+      Text('Favorite demo: ${favoriteCourses.length}');
 }
