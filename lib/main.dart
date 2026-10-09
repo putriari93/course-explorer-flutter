@@ -281,11 +281,19 @@ class _DashboardPageState extends State<DashboardPage> {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final result = await Navigator.push<bool>(
             context,
             MaterialPageRoute(builder: (_) => CourseDetailPage(course: course)),
           );
+
+          if (result == true && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${course['title']} ditambahkan ke favorite'),
+              ),
+            );
+          }
         },
         leading: Icon(statusInfo.icon, color: statusInfo.color),
         title: Text(
@@ -451,11 +459,27 @@ class CourseDetailPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Kembali'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                icon: const Icon(Icons.favorite),
+                label: const Text('Pilih / Favorite'),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Kembali'),
+              ),
             ),
           ],
         ),
