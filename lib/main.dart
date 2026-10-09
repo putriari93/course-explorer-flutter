@@ -1,7 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
+import 'services/course_service.dart';
+import 'services/student_service.dart';
 
 import 'package:provider/provider.dart';
 
@@ -21,11 +21,9 @@ void main() {
 }
 
 Future<Map<String, dynamic>> loadStudentData() async {
-  final jsonString = await rootBundle.loadString(
-    'assets/data/student_data.json',
-  );
-
-  return jsonDecode(jsonString) as Map<String, dynamic>;
+  final student = await StudentService().loadStudent();
+  final courses = await CourseService().loadCourses();
+  return {'student': student, 'courses': courses};
 }
 
 class MyApp extends StatelessWidget {
@@ -204,9 +202,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
         final student = data['student'] as Map<String, dynamic>;
 
-        final courses = (data['courses'] as List<dynamic>)
-            .map((json) => Course.fromJson(json as Map<String, dynamic>))
-            .toList();
+        final courses = data['courses'] as List<Course>;
 
         final completedCount = courses
             .where((course) => course.status == 'done')
