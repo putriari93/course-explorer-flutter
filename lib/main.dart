@@ -167,7 +167,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const Sizx(height: 8),
+
+                  const SizedBox(height: 8),
+
                   LayoutBuilder(
                     builder: (context, constraints) {
                       return GridView.builder(
@@ -196,6 +198,9 @@ class _DashboardPageState extends State<DashboardPage> {
                               .onSurfaceVariant,
                         ),
                   ),
+
+                  const SizedBox(height: 20),
+                  _buildScrollableFormDemo(),
                 ],
               ),
             );
@@ -290,6 +295,72 @@ class _DashboardPageState extends State<DashboardPage> {
             color: statusInfo.color,
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScrollableFormDemo() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Form Profil',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '$studentId - $studentName',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Nama',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'NIM',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Program Studi',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Semester',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              maxLines: 4,
+              decoration: InputDecoration(
+                labelText: 'Tentang Saya',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {},
+                child: const Text('Simpan Profil'),
+              ),
+            ),
+          ],
         ),
       ),
     );
