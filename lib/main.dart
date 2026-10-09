@@ -41,15 +41,26 @@ class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() =>
+      _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  late Future<Map<String, dynamic>> studentFuture;
+class _DashboardPageState
+    extends State<DashboardPage> {
+  late Future<Map<String, dynamic>>
+      studentFuture;
 
   int currentIndex = 0;
 
   final Set<String> favoriteCourses = {};
+
+  final feedbackFormKey =
+      GlobalKey<FormState>();
+
+  String feedbackName = studentName;
+  String feedbackNim = studentId;
+  String feedbackComment = '';
+  String? feedbackResult;
 
   @override
   void initState() {
@@ -96,7 +107,8 @@ class _DashboardPageState extends State<DashboardPage> {
           currentIndex = index;
         });
       },
-      labelType: NavigationRailLabelType.all,
+      labelType:
+          NavigationRailLabelType.all,
       destinations: const [
         NavigationRailDestination(
           icon: Icon(Icons.home),
@@ -116,9 +128,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final orientation = MediaQuery.of(context).orientation;
-    final layoutType = size.width < 600 ? 'Compact' : 'Wide';
+    final size =
+        MediaQuery.of(context).size;
+
+    final orientation =
+        MediaQuery.of(context).orientation;
+
+    final layoutType =
+        size.width < 600
+            ? 'Compact'
+            : 'Wide';
 
     final pageTitles = [
       'Learning Dashboard',
@@ -126,13 +145,16 @@ class _DashboardPageState extends State<DashboardPage> {
       'Profile',
     ];
 
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<
+        Map<String, dynamic>>(
       future: studentFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState ==
+            ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child:
+                  CircularProgressIndicator(),
             ),
           );
         }
@@ -141,10 +163,14 @@ class _DashboardPageState extends State<DashboardPage> {
           return Scaffold(
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding:
+                    const EdgeInsets.all(
+                  24,
+                ),
                 child: Text(
                   'Gagal memuat data: ${snapshot.error}',
-                  textAlign: TextAlign.center,
+                  textAlign:
+                      TextAlign.center,
                 ),
               ),
             ),
@@ -154,23 +180,30 @@ class _DashboardPageState extends State<DashboardPage> {
         final data = snapshot.data!;
 
         final student =
-            data['student'] as Map<String, dynamic>;
+            data['student']
+                as Map<String, dynamic>;
 
         final courses =
-            (data['courses'] as List<dynamic>)
-                .cast<Map<String, dynamic>>();
+            (data['courses']
+                    as List<dynamic>)
+                .cast<
+                    Map<String, dynamic>>();
 
-        final completedCount = courses
-            .where(
-              (course) => course['status'] == 'done',
-            )
-            .length;
+        final completedCount =
+            courses
+                .where(
+                  (course) =>
+                      course['status'] ==
+                      'done',
+                )
+                .length;
 
         final pages = [
           _buildHomePage(
             student: student,
             courses: courses,
-            completedCount: completedCount,
+            completedCount:
+                completedCount,
             size: size,
             orientation: orientation,
             layoutType: layoutType,
@@ -184,12 +217,15 @@ class _DashboardPageState extends State<DashboardPage> {
         ];
 
         return LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 840) {
+          builder:
+              (context, constraints) {
+            if (constraints.maxWidth <
+                840) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(
-                    pageTitles[currentIndex],
+                    pageTitles[
+                        currentIndex],
                   ),
                   backgroundColor:
                       Theme.of(context)
@@ -201,7 +237,8 @@ class _DashboardPageState extends State<DashboardPage> {
                           .onPrimary,
                 ),
                 body: SafeArea(
-                  child: pages[currentIndex],
+                  child:
+                      pages[currentIndex],
                 ),
                 bottomNavigationBar:
                     _buildNavigationBar(),
@@ -211,7 +248,8 @@ class _DashboardPageState extends State<DashboardPage> {
             return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  pageTitles[currentIndex],
+                  pageTitles[
+                      currentIndex],
                 ),
                 backgroundColor:
                     Theme.of(context)
@@ -232,7 +270,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
 
                     Expanded(
-                      child: pages[currentIndex],
+                      child:
+                          pages[
+                              currentIndex],
                     ),
                   ],
                 ),
@@ -247,15 +287,19 @@ class _DashboardPageState extends State<DashboardPage> {
   // home
 
   Widget _buildHomePage({
-    required Map<String, dynamic> student,
-    required List<Map<String, dynamic>> courses,
+    required Map<String, dynamic>
+        student,
+    required List<
+            Map<String, dynamic>>
+        courses,
     required int completedCount,
     required Size size,
     required Orientation orientation,
     required String layoutType,
   }) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding:
+          const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -263,10 +307,13 @@ class _DashboardPageState extends State<DashboardPage> {
           Card(
             child: Padding(
               padding:
-                  const EdgeInsets.all(16),
+                  const EdgeInsets.all(
+                16,
+              ),
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    CrossAxisAlignment
+                        .start,
                 children: [
                   const Text(
                     '$studentId - $studentName',
@@ -276,7 +323,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
                   Text(
                     'Width: ${size.width.toStringAsFixed(0)}',
@@ -318,8 +367,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     '${courses.length}',
                 label: 'Topik',
-                icon:
-                    Icons.menu_book_rounded,
+                icon: Icons
+                    .menu_book_rounded,
               ),
 
               const SizedBox(width: 12),
@@ -328,8 +377,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     '$completedCount',
                 label: 'Selesai',
-                icon:
-                    Icons.task_alt_rounded,
+                icon: Icons
+                    .task_alt_rounded,
               ),
             ],
           ),
@@ -341,10 +390,13 @@ class _DashboardPageState extends State<DashboardPage> {
   // course
 
   Widget _buildCoursesPage({
-    required List<Map<String, dynamic>> courses,
+    required List<
+            Map<String, dynamic>>
+        courses,
   }) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding:
+          const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -361,13 +413,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
           Text(
             'Daftar Course',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(
-                  fontWeight:
-                      FontWeight.bold,
-                ),
+            style:
+                Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
           ),
 
           const SizedBox(height: 12),
@@ -381,10 +434,12 @@ class _DashboardPageState extends State<DashboardPage> {
   // profile
 
   Widget _buildProfilePage({
-    required Map<String, dynamic> student,
+    required Map<String, dynamic>
+        student,
   }) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding:
+          const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.stretch,
@@ -394,6 +449,10 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 20),
 
           _buildScrollableFormDemo(),
+
+          const SizedBox(height: 20),
+
+          _buildFeedbackForm(),
         ],
       ),
     );
@@ -406,7 +465,8 @@ class _DashboardPageState extends State<DashboardPage> {
   ) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         child: Row(
           children: [
             CircleAvatar(
@@ -429,23 +489,29 @@ class _DashboardPageState extends State<DashboardPage> {
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    CrossAxisAlignment
+                        .start,
                 children: [
                   Text(
                     'NIM: ${student['nim']}',
-                    style: const TextStyle(
+                    style:
+                        const TextStyle(
                       fontWeight:
                           FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 4,
+                  ),
 
                   Text(
                     'Nama: ${student['name']}',
                   ),
 
-                  const SizedBox(height: 4),
+                  const SizedBox(
+                    height: 4,
+                  ),
 
                   Text(
                     student['semester']
@@ -479,11 +545,14 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               Icon(icon),
 
-              const SizedBox(height: 6),
+              const SizedBox(
+                height: 6,
+              ),
 
               Text(
                 value,
-                style: const TextStyle(
+                style:
+                    const TextStyle(
                   fontSize: 18,
                   fontWeight:
                       FontWeight.bold,
@@ -505,10 +574,12 @@ class _DashboardPageState extends State<DashboardPage> {
   // grid course
 
   Widget _buildCourseGrid(
-    List<Map<String, dynamic>> courses,
+    List<Map<String, dynamic>>
+        courses,
   ) {
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder:
+          (context, constraints) {
         return GridView.builder(
           shrinkWrap: true,
           physics:
@@ -580,7 +651,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // open detail
           onTap: () async {
             final result =
-                await Navigator.push<bool>(
+                await Navigator.push<
+                    bool>(
               context,
               MaterialPageRoute(
                 builder: (_) =>
@@ -598,8 +670,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 );
               });
 
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(
                 SnackBar(
                   content: Text(
                     '${course['title']} ditambahkan ke favorite',
@@ -617,8 +690,10 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
             title: Text(
-              course['title'] as String,
-              style: const TextStyle(
+              course['title']
+                  as String,
+              style:
+                  const TextStyle(
                 fontWeight:
                     FontWeight.w600,
               ),
@@ -637,7 +712,8 @@ class _DashboardPageState extends State<DashboardPage> {
               icon: Icon(
                 isFavorite
                     ? Icons.favorite
-                    : Icons.favorite_border,
+                    : Icons
+                        .favorite_border,
                 color: isFavorite
                     ? Colors.red
                     : null,
@@ -647,7 +723,8 @@ class _DashboardPageState extends State<DashboardPage> {
               onPressed: () {
                 setState(() {
                   if (isFavorite) {
-                    favoriteCourses.remove(
+                    favoriteCourses
+                        .remove(
                       courseCode,
                     );
                   } else {
@@ -657,8 +734,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   }
                 });
 
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(
                   SnackBar(
                     content: Text(
                       isFavorite
@@ -781,6 +859,212 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // feedback form
+
+  Widget _buildFeedbackForm() {
+    return Card(
+      child: Padding(
+        padding:
+            const EdgeInsets.all(16),
+        child: Form(
+          key: feedbackFormKey,
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Form Feedback',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 8,
+              ),
+
+              const Text(
+                '$studentId - $studentName',
+                style: TextStyle(
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              TextFormField(
+                initialValue:
+                    studentName,
+                decoration:
+                    const InputDecoration(
+                  labelText: 'Nama',
+                  border:
+                      OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value
+                          .trim()
+                          .isEmpty) {
+                    return 'Nama wajib diisi';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) {
+                  feedbackName =
+                      value!.trim();
+                },
+              ),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              TextFormField(
+                initialValue:
+                    studentId,
+                decoration:
+                    const InputDecoration(
+                  labelText: 'NIM',
+                  border:
+                      OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value
+                          .trim()
+                          .isEmpty) {
+                    return 'NIM wajib diisi';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) {
+                  feedbackNim =
+                      value!.trim();
+                },
+              ),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              TextFormField(
+                maxLines: 4,
+                decoration:
+                    const InputDecoration(
+                  labelText: 'Komentar',
+                  hintText:
+                      'Masukkan komentar minimal 5 karakter',
+                  border:
+                      OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value
+                          .trim()
+                          .isEmpty) {
+                    return 'Komentar wajib diisi';
+                  }
+
+                  if (value
+                          .trim()
+                          .length <
+                      5) {
+                    return 'Komentar minimal 5 karakter';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) {
+                  feedbackComment =
+                      value!.trim();
+                },
+              ),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              SizedBox(
+                width:
+                    double.infinity,
+                child: FilledButton(
+                  onPressed: () {
+                    if (feedbackFormKey
+                        .currentState!
+                        .validate()) {
+                      feedbackFormKey
+                          .currentState!
+                          .save();
+
+                      setState(() {
+                        feedbackResult =
+                            'Nama: $feedbackName\n'
+                            'NIM: $feedbackNim\n'
+                            'Komentar: $feedbackComment';
+                      });
+                    }
+                  },
+                  child: const Text(
+                    'Kirim Feedback',
+                  ),
+                ),
+              ),
+
+              if (feedbackResult !=
+                  null) ...[
+                const SizedBox(
+                  height: 20,
+                ),
+
+                const Text(
+                  'Hasil Feedback',
+                  style: TextStyle(
+                    fontWeight:
+                        FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 8,
+                ),
+
+                Container(
+                  width:
+                      double.infinity,
+                  padding:
+                      const EdgeInsets
+                          .all(12),
+                  decoration:
+                      BoxDecoration(
+                    color:
+                        Colors.blue
+                            .shade50,
+                    borderRadius:
+                        BorderRadius
+                            .circular(
+                      8,
+                    ),
+                  ),
+                  child: Text(
+                    feedbackResult!,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // status course
 
   _StatusInfo _statusInfo(
@@ -832,7 +1116,6 @@ class CourseDetailPage
         title:
             const Text('Detail Course'),
       ),
-
       body: SingleChildScrollView(
         padding:
             const EdgeInsets.all(24),
@@ -1130,8 +1413,9 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color: Colors
-                        .blue.shade100,
+                    color:
+                        Colors.blue
+                            .shade100,
                     child: const Text(
                       'Panel A\nFlex 2',
                       textAlign:
@@ -1148,8 +1432,9 @@ class FlexibleLayoutDemo
                     height: 80,
                     alignment:
                         Alignment.center,
-                    color: Colors
-                        .orange.shade100,
+                    color:
+                        Colors.orange
+                            .shade100,
                     child: const Text(
                       'Panel B\nFlex 1',
                       textAlign:
@@ -1175,14 +1460,15 @@ class FlexibleLayoutDemo
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: skills
-                  .map(
-                    (skill) => Chip(
-                      label:
-                          Text(skill),
-                    ),
-                  )
-                  .toList(),
+              children:
+                  skills
+                      .map(
+                        (skill) => Chip(
+                          label:
+                              Text(skill),
+                        ),
+                      )
+                      .toList(),
             ),
           ],
         ),
