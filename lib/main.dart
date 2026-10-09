@@ -52,6 +52,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+    final layoutType = size.width < 600 ? 'Compact' : 'Wide';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Learning Dashboard'),
@@ -103,6 +107,27 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '$studentId - $studentName',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text('Width: ${size.width.toStringAsFixed(0)}'),
+                          Text('Height: ${size.height.toStringAsFixed(0)}'),
+                          Text('Orientation: $orientation'),
+                          Text('Layout: $layoutType'),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 12),
 
