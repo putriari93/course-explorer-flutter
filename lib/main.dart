@@ -15,17 +15,15 @@ const String studentId = '2415051091';
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CourseProvider(),
+      create: (_) =>
+          CourseProvider(CourseRepository(CourseService()))..loadCourses(),
       child: const MyApp(),
     ),
   );
 }
 
-Future<Map<String, dynamic>> loadStudentData() async {
-  final student = await StudentService().loadStudent();
-  final courses = await CourseRepository(CourseService()).getCourses();
-  return {'student': student, 'courses': courses};
-}
+Future<Map<String, dynamic>> loadStudentData() =>
+    StudentService().loadStudent();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -201,9 +199,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
         final data = snapshot.data!;
 
-        final student = data['student'] as Map<String, dynamic>;
+        final student = data;
 
-        final courses = data['courses'] as List<Course>;
+        final courses = context.watch<CourseProvider>().courses;
 
         final completedCount = courses
             .where((course) => course.status == 'done')
@@ -366,7 +364,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
           const SizedBox(height: 12),
 
-          _buildCourseGrid(courses),
+          if (context.watch<CourseProvider>().isLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (context.watch<CourseProvider>().error != null) ...[
+            Text(context.watch<CourseProvider>().error!),
+            FilledButton(
+              onPressed: () => context.read<CourseProvider>().loadCourses(),
+              child: const Text('Coba lagi'),
+            ),
+          ] else
+            _buildCourseGrid(courses),
         ],
       ),
     );
