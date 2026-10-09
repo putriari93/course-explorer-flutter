@@ -307,7 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                           );
 
-                          if (confirm != true) {
+                          if (!mounted || confirm != true) {
                             return;
                           }
 
