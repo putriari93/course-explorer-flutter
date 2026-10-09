@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'package:provider/provider.dart';
+
 import 'providers/course_provider.dart';
 
 const String studentName = 'Putri Ari Laksmi';
 const String studentId = '2415051091';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CourseProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 Future<Map<String, dynamic>> loadStudentData() async {
@@ -1385,37 +1392,29 @@ class _FavoriteCounterNotifierDemoState
   );
 }
 
-class ChangeNotifierDemo extends StatefulWidget {
+class ChangeNotifierDemo extends StatelessWidget {
   const ChangeNotifierDemo({super.key});
   @override
-  State<ChangeNotifierDemo> createState() => _ChangeNotifierDemoState();
-}
-
-class _ChangeNotifierDemoState extends State<ChangeNotifierDemo> {
-  final CourseProvider courseProvider = CourseProvider();
-  @override
-  void dispose() {
-    courseProvider.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: courseProvider,
-    builder: (context, child) => Card(
-      child: ListTile(
-        title: const Text('ChangeNotifier Demo'),
-        subtitle: Text('Favorite: ${courseProvider.favorites.length}'),
-        trailing: IconButton(
-          tooltip: 'Toggle ChangeNotifier demo',
-          onPressed: () => courseProvider.toggleFavorite('MOB01'),
-          icon: Icon(
-            courseProvider.isFavorite('MOB01')
-                ? Icons.favorite
-                : Icons.favorite_border,
+  Widget build(BuildContext context) {
+    // Instance yang sama dengan root, bukan CourseProvider kedua.
+    final courseProvider = context.read<CourseProvider>();
+    return ListenableBuilder(
+      listenable: courseProvider,
+      builder: (context, child) => Card(
+        child: ListTile(
+          title: const Text('ChangeNotifier Demo'),
+          subtitle: Text('Favorite: ${courseProvider.favorites.length}'),
+          trailing: IconButton(
+            tooltip: 'Toggle ChangeNotifier demo',
+            onPressed: () => courseProvider.toggleFavorite('MOB01'),
+            icon: Icon(
+              courseProvider.isFavorite('MOB01')
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
