@@ -273,12 +273,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const IdentityCard(),
           const SizedBox(height: 12),
           const LocalStateDemo(),
-          FavoritePropDrillingDemo(
-            favoriteCourses: favoriteCourses,
-            onToggle: (code) => setState(() {
-              if (!favoriteCourses.add(code)) favoriteCourses.remove(code);
-            }),
-          ),
+          const FavoriteStateDemo(),
 
           const SizedBox(height: 12),
 
@@ -1313,4 +1308,22 @@ class FavoriteSummaryDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Text('Favorite demo: ${favoriteCourses.length}');
+}
+
+class FavoriteStateDemo extends StatefulWidget {
+  const FavoriteStateDemo({super.key});
+  @override
+  State<FavoriteStateDemo> createState() => _FavoriteStateDemoState();
+}
+
+class _FavoriteStateDemoState extends State<FavoriteStateDemo> {
+  // Satu pemilik state demo; list dan summary tidak menyalin state.
+  final Set<String> favorites = {};
+  @override
+  Widget build(BuildContext context) => FavoritePropDrillingDemo(
+    favoriteCourses: favorites,
+    onToggle: (code) => setState(() {
+      if (!favorites.add(code)) favorites.remove(code);
+    }),
+  );
 }
