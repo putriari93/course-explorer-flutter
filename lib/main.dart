@@ -55,15 +55,11 @@ class IdentityCard extends StatelessWidget {
             CircleAvatar(
               radius: 22,
               backgroundColor:
-                  Theme.of(context)
-                      .colorScheme
-                      .primaryContainer,
+                  Theme.of(context).colorScheme.primaryContainer,
               child: Icon(
                 Icons.badge_outlined,
                 color:
-                    Theme.of(context)
-                        .colorScheme
-                        .onPrimaryContainer,
+                    Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
 
@@ -71,20 +67,16 @@ class IdentityCard extends StatelessWidget {
 
             const Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     studentName,
                     style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-
                   SizedBox(height: 3),
-
                   Text(
                     'NIM: $studentId',
                   ),
@@ -99,24 +91,23 @@ class IdentityCard extends StatelessWidget {
 }
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  const DashboardPage({
+    super.key,
+  });
 
   @override
   State<DashboardPage> createState() =>
       _DashboardPageState();
 }
 
-class _DashboardPageState
-    extends State<DashboardPage> {
-  late Future<Map<String, dynamic>>
-      studentFuture;
+class _DashboardPageState extends State<DashboardPage> {
+  late Future<Map<String, dynamic>> studentFuture;
 
   int currentIndex = 0;
 
   final Set<String> favoriteCourses = {};
 
-  final feedbackFormKey =
-      GlobalKey<FormState>();
+  final feedbackFormKey = GlobalKey<FormState>();
 
   String feedbackName = studentName;
   String feedbackNim = studentId;
@@ -124,6 +115,7 @@ class _DashboardPageState
   String? feedbackResult;
 
   bool isSubmitting = false;
+  bool isNavigating = false;
 
   @override
   void initState() {
@@ -173,7 +165,10 @@ class _DashboardPageState
       labelType: NavigationRailLabelType.all,
       groupAlignment: -1.0,
       destinations: const [
-        NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
+        NavigationRailDestination(
+          icon: Icon(Icons.home),
+          label: Text('Home'),
+        ),
         NavigationRailDestination(
           icon: Icon(Icons.school),
           label: Text('Courses'),
@@ -207,16 +202,14 @@ class _DashboardPageState
       'Profile',
     ];
 
-    return FutureBuilder<
-        Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>>(
       future: studentFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState ==
             ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child:
-                  CircularProgressIndicator(),
+              child: CircularProgressIndicator(),
             ),
           );
         }
@@ -225,14 +218,10 @@ class _DashboardPageState
           return Scaffold(
             body: Center(
               child: Padding(
-                padding:
-                    const EdgeInsets.all(
-                  24,
-                ),
+                padding: const EdgeInsets.all(24),
                 child: Text(
                   'Gagal memuat data: ${snapshot.error}',
-                  textAlign:
-                      TextAlign.center,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -242,29 +231,24 @@ class _DashboardPageState
         final data = snapshot.data!;
 
         final student =
-            data['student']
-                as Map<String, dynamic>;
+            data['student'] as Map<String, dynamic>;
 
         final courses =
-            (data['courses']
-                    as List<dynamic>)
-                .cast<
-                    Map<String, dynamic>>();
+            (data['courses'] as List<dynamic>)
+                .cast<Map<String, dynamic>>();
 
-        final completedCount = courses
-            .where(
-              (course) =>
-                  course['status'] ==
-                  'done',
-            )
-            .length;
+        final completedCount =
+            courses
+                .where(
+                  (course) =>
+                      course['status'] == 'done',
+                )
+                .length;
 
         final pages = [
           _buildHomePage(
-            student: student,
             courses: courses,
-            completedCount:
-                completedCount,
+            completedCount: completedCount,
             size: size,
             orientation: orientation,
             layoutType: layoutType,
@@ -282,31 +266,47 @@ class _DashboardPageState
             if (constraints.maxWidth < 840) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(pageTitles[currentIndex]),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  title: Text(
+                    pageTitles[currentIndex],
+                  ),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primary,
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onPrimary,
                 ),
-                body: SafeArea(child: pages[currentIndex]),
-                bottomNavigationBar: _buildNavigationBar(),
+                body: SafeArea(
+                  child: pages[currentIndex],
+                ),
+                bottomNavigationBar:
+                    _buildNavigationBar(),
               );
             }
 
             return Scaffold(
               appBar: AppBar(
-                title: Text(pageTitles[currentIndex]),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                title: Text(
+                  pageTitles[currentIndex],
+                ),
+                backgroundColor:
+                    Theme.of(context).colorScheme.primary,
+                foregroundColor:
+                    Theme.of(context).colorScheme.onPrimary,
               ),
               body: SafeArea(
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     _buildNavigationRail(),
 
-                    const VerticalDivider(width: 1),
+                    const VerticalDivider(
+                      width: 1,
+                    ),
 
                     Expanded(
-                      child: SizedBox.expand(child: pages[currentIndex]),
+                      child: SizedBox.expand(
+                        child: pages[currentIndex],
+                      ),
                     ),
                   ],
                 ),
@@ -321,10 +321,7 @@ class _DashboardPageState
   // home
 
   Widget _buildHomePage({
-    required Map<String, dynamic>
-        student,
-    required List<Map<String, dynamic>>
-        courses,
+    required List<Map<String, dynamic>> courses,
     required int completedCount,
     required Size size,
     required Orientation orientation,
@@ -342,27 +339,20 @@ class _DashboardPageState
 
           Card(
             child: Padding(
-              padding:
-                  const EdgeInsets.all(
-                16,
-              ),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                    CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Informasi Layar',
                     style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
 
                   Text(
                     'Width: ${size.width.toStringAsFixed(0)}',
@@ -394,30 +384,20 @@ class _DashboardPageState
 
           const SizedBox(height: 12),
 
-          _buildProfileCard(student),
-
-          const SizedBox(height: 12),
-
           Row(
             children: [
               _buildSummaryCard(
-                value:
-                    '${courses.length}',
+                value: '${courses.length}',
                 label: 'Topik',
-                icon: Icons
-                    .menu_book_rounded,
+                icon: Icons.menu_book_rounded,
               ),
 
-              const SizedBox(
-                width: 12,
-              ),
+              const SizedBox(width: 12),
 
               _buildSummaryCard(
-                value:
-                    '$completedCount',
+                value: '$completedCount',
                 label: 'Selesai',
-                icon: Icons
-                    .task_alt_rounded,
+                icon: Icons.task_alt_rounded,
               ),
             ],
           ),
@@ -429,8 +409,7 @@ class _DashboardPageState
   // course
 
   Widget _buildCoursesPage({
-    required List<Map<String, dynamic>>
-        courses,
+    required List<Map<String, dynamic>> courses,
   }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -448,8 +427,7 @@ class _DashboardPageState
                 .textTheme
                 .titleLarge
                 ?.copyWith(
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
           ),
 
@@ -464,8 +442,7 @@ class _DashboardPageState
   // profile
 
   Widget _buildProfilePage({
-    required Map<String, dynamic>
-        student,
+    required Map<String, dynamic> student,
   }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -494,8 +471,7 @@ class _DashboardPageState
   ) {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             CircleAvatar(
@@ -518,33 +494,25 @@ class _DashboardPageState
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     'NIM: ${student['nim']}',
-                    style:
-                        const TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
 
                   Text(
                     'Nama: ${student['name']}',
                   ),
 
-                  const SizedBox(
-                    height: 4,
-                  ),
+                  const SizedBox(height: 4),
 
                   Text(
-                    student['semester']
-                        as String,
+                    student['semester'] as String,
                   ),
                 ],
               ),
@@ -580,15 +548,13 @@ class _DashboardPageState
                 value,
                 style: const TextStyle(
                   fontSize: 18,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
 
               Text(
                 label,
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -600,29 +566,33 @@ class _DashboardPageState
   // grid course
 
   Widget _buildCourseGrid(
-    List<Map<String, dynamic>>
-        courses,
+    List<Map<String, dynamic>> courses,
   ) {
     return LayoutBuilder(
-      builder:
-          (context, constraints) {
+      builder: (context, constraints) {
+        final columns =
+            columnsFor(constraints.maxWidth);
+
+        final itemHeight =
+            constraints.maxWidth < 600
+                ? 120.0
+                : constraints.maxWidth < 840
+                    ? 115.0
+                    : 110.0;
+
         return GridView.builder(
           shrinkWrap: true,
           physics:
               const NeverScrollableScrollPhysics(),
           gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:
-                columnsFor(
-              constraints.maxWidth,
-            ),
+            crossAxisCount: columns,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 2.8,
+            mainAxisExtent: itemHeight,
           ),
           itemCount: courses.length,
-          itemBuilder:
-              (context, index) {
+          itemBuilder: (context, index) {
             return _buildCourseCard(
               courses[index],
             );
@@ -673,9 +643,16 @@ class _DashboardPageState
         child: InkWell(
           // open detail
           onTap: () async {
+            if (isNavigating) {
+              return;
+            }
+
+            setState(() {
+              isNavigating = true;
+            });
+
             final result =
-                await Navigator.push<
-                    bool>(
+                await Navigator.push<bool>(
               context,
               MaterialPageRoute(
                 builder: (_) =>
@@ -685,17 +662,23 @@ class _DashboardPageState
               ),
             );
 
-            if (result == true &&
-                mounted) {
+            if (!mounted) {
+              return;
+            }
+
+            setState(() {
+              isNavigating = false;
+            });
+
+            if (result == true) {
               setState(() {
                 favoriteCourses.add(
                   courseCode,
                 );
               });
 
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
                 SnackBar(
                   content: Text(
                     '${course['title']} ditambahkan ke favorite',
@@ -708,17 +691,13 @@ class _DashboardPageState
           child: ListTile(
             leading: Icon(
               statusInfo.icon,
-              color:
-                  statusInfo.color,
+              color: statusInfo.color,
             ),
 
             title: Text(
-              course['title']
-                  as String,
-              style:
-                  const TextStyle(
-                fontWeight:
-                    FontWeight.w600,
+              course['title'] as String,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
               ),
             ),
 
@@ -728,39 +707,37 @@ class _DashboardPageState
             ),
 
             trailing: IconButton(
-              tooltip: isFavorite
-                  ? 'Hapus dari favorite'
-                  : 'Tambahkan ke favorite',
+              tooltip:
+                  isFavorite
+                      ? 'Hapus dari favorite'
+                      : 'Tambahkan ke favorite',
 
               icon: Icon(
                 isFavorite
                     ? Icons.favorite
-                    : Icons
-                        .favorite_border,
-                color: isFavorite
-                    ? Colors.red
-                    : null,
+                    : Icons.favorite_border,
+                color:
+                    isFavorite
+                        ? Colors.red
+                        : null,
               ),
 
               // favorite
               onPressed: () {
                 setState(() {
                   if (isFavorite) {
-                    favoriteCourses
-                        .remove(
+                    favoriteCourses.remove(
                       courseCode,
                     );
                   } else {
-                    favoriteCourses
-                        .add(
+                    favoriteCourses.add(
                       courseCode,
                     );
                   }
                 });
 
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
                   SnackBar(
                     content: Text(
                       isFavorite
@@ -782,8 +759,7 @@ class _DashboardPageState
   Widget _buildScrollableFormDemo() {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment:
               CrossAxisAlignment.start,
@@ -792,58 +768,43 @@ class _DashboardPageState
               'Form Profil',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight:
-                    FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
-
-            const SizedBox(height: 12),
-
-            const IdentityCard(),
 
             const SizedBox(height: 16),
 
             const TextField(
-              decoration:
-                  InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nama',
-                border:
-                    OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 16),
 
             const TextField(
-              decoration:
-                  InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'NIM',
-                border:
-                    OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 16),
 
             const TextField(
-              decoration:
-                  InputDecoration(
-                labelText:
-                    'Program Studi',
-                border:
-                    OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: 'Program Studi',
+                border: OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 16),
 
             const TextField(
-              decoration:
-                  InputDecoration(
-                labelText:
-                    'Semester',
-                border:
-                    OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: 'Semester',
+                border: OutlineInputBorder(),
               ),
             ),
 
@@ -851,12 +812,9 @@ class _DashboardPageState
 
             const TextField(
               maxLines: 4,
-              decoration:
-                  InputDecoration(
-                labelText:
-                    'Tentang Saya',
-                border:
-                    OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: 'Tentang Saya',
+                border: OutlineInputBorder(),
               ),
             ),
 
@@ -882,8 +840,7 @@ class _DashboardPageState
   Widget _buildFeedbackForm() {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: feedbackFormKey,
           child: Column(
@@ -894,31 +851,31 @@ class _DashboardPageState
                 'Form Feedback',
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
-              const IdentityCard(),
+              const Text(
+                '$studentId - $studentName',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
               const SizedBox(height: 16),
 
               TextFormField(
-                initialValue:
-                    studentName,
+                initialValue: studentName,
                 decoration:
                     const InputDecoration(
                   labelText: 'Nama',
-                  border:
-                      OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null ||
-                      value
-                          .trim()
-                          .isEmpty) {
+                      value.trim().isEmpty) {
                     return 'Nama wajib diisi';
                   }
 
@@ -933,19 +890,15 @@ class _DashboardPageState
               const SizedBox(height: 16),
 
               TextFormField(
-                initialValue:
-                    studentId,
+                initialValue: studentId,
                 decoration:
                     const InputDecoration(
                   labelText: 'NIM',
-                  border:
-                      OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null ||
-                      value
-                          .trim()
-                          .isEmpty) {
+                      value.trim().isEmpty) {
                     return 'NIM wajib diisi';
                   }
 
@@ -963,25 +916,18 @@ class _DashboardPageState
                 maxLines: 4,
                 decoration:
                     const InputDecoration(
-                  labelText:
-                      'Komentar',
+                  labelText: 'Komentar',
                   hintText:
                       'Masukkan komentar minimal 5 karakter',
-                  border:
-                      OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null ||
-                      value
-                          .trim()
-                          .isEmpty) {
+                      value.trim().isEmpty) {
                     return 'Komentar wajib diisi';
                   }
 
-                  if (value
-                          .trim()
-                          .length <
-                      5) {
+                  if (value.trim().length < 5) {
                     return 'Komentar minimal 5 karakter';
                   }
 
@@ -1009,12 +955,9 @@ class _DashboardPageState
                               }
 
                               final confirm =
-                                  await showDialog<
-                                      bool>(
-                                context:
-                                    context,
-                                builder:
-                                    (context) {
+                                  await showDialog<bool>(
+                                context: context,
+                                builder: (context) {
                                   return AlertDialog(
                                     title:
                                         const Text(
@@ -1056,8 +999,7 @@ class _DashboardPageState
                                 },
                               );
 
-                              if (confirm !=
-                                  true) {
+                              if (confirm != true) {
                                 return;
                               }
 
@@ -1066,12 +1008,10 @@ class _DashboardPageState
                                   .save();
 
                               setState(() {
-                                isSubmitting =
-                                    true;
+                                isSubmitting = true;
                               });
 
-                              await Future
-                                  .delayed(
+                              await Future.delayed(
                                 const Duration(
                                   seconds: 1,
                                 ),
@@ -1082,8 +1022,7 @@ class _DashboardPageState
                               }
 
                               setState(() {
-                                isSubmitting =
-                                    false;
+                                isSubmitting = false;
 
                                 feedbackResult =
                                     'Nama: $feedbackName\n'
@@ -1095,64 +1034,50 @@ class _DashboardPageState
                                       .of(context)
                                   .showSnackBar(
                                 const SnackBar(
-                                  content:
-                                      Text(
+                                  content: Text(
                                     'Feedback berhasil dikirim',
                                   ),
                                 ),
                               );
                             },
 
-                  child: isSubmitting
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child:
-                              CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text(
-                          'Kirim Feedback',
-                        ),
+                  child:
+                      isSubmitting
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child:
+                                  CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Kirim Feedback',
+                            ),
                 ),
               ),
 
-              if (feedbackResult !=
-                  null) ...[
-                const SizedBox(
-                  height: 20,
-                ),
+              if (feedbackResult != null) ...[
+                const SizedBox(height: 20),
 
                 const Text(
                   'Hasil Feedback',
                   style: TextStyle(
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
                 Container(
-                  width:
-                      double.infinity,
+                  width: double.infinity,
                   padding:
-                      const EdgeInsets
-                          .all(12),
-                  decoration:
-                      BoxDecoration(
+                      const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
                     color:
-                        Colors
-                            .blue
-                            .shade50,
+                        Colors.blue.shade50,
                     borderRadius:
-                        BorderRadius
-                            .circular(
-                      8,
-                    ),
+                        BorderRadius.circular(8),
                   ),
                   child: Text(
                     feedbackResult!,
@@ -1175,24 +1100,21 @@ class _DashboardPageState
       case 'done':
         return const _StatusInfo(
           label: 'Selesai',
-          icon:
-              Icons.menu_book_rounded,
+          icon: Icons.menu_book_rounded,
           color: Colors.green,
         );
 
       case 'active':
         return const _StatusInfo(
           label: 'Aktif',
-          icon:
-              Icons.menu_book_rounded,
+          icon: Icons.menu_book_rounded,
           color: Colors.orange,
         );
 
       default:
         return const _StatusInfo(
           label: 'Rencana',
-          icon:
-              Icons.menu_book_rounded,
+          icon: Icons.menu_book_rounded,
           color: Colors.grey,
         );
     }
@@ -1201,8 +1123,7 @@ class _DashboardPageState
 
 // course detail
 
-class CourseDetailPage
-    extends StatelessWidget {
+class CourseDetailPage extends StatelessWidget {
   final Map<String, dynamic> course;
 
   const CourseDetailPage({
@@ -1229,12 +1150,10 @@ class CourseDetailPage
             const SizedBox(height: 24),
 
             Text(
-              course['title']
-                  as String,
+              course['title'] as String,
               style: const TextStyle(
                 fontSize: 24,
-                fontWeight:
-                    FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
 
@@ -1260,8 +1179,7 @@ class CourseDetailPage
 
             SizedBox(
               width: double.infinity,
-              child:
-                  ElevatedButton.icon(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(
                     context,
@@ -1281,8 +1199,7 @@ class CourseDetailPage
 
             SizedBox(
               width: double.infinity,
-              child:
-                  OutlinedButton(
+              child: OutlinedButton(
                 onPressed: () {
                   Navigator.pop(
                     context,
@@ -1311,13 +1228,10 @@ class ResponsiveLayoutDemo
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder:
-          (context, constraints) {
-        if (constraints.maxWidth <
-            600) {
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 600) {
           return const CompactLayout();
-        } else if (constraints
-                .maxWidth <
+        } else if (constraints.maxWidth <
             840) {
           return const MediumLayout();
         } else {
@@ -1328,8 +1242,7 @@ class ResponsiveLayoutDemo
   }
 }
 
-class CompactLayout
-    extends StatelessWidget {
+class CompactLayout extends StatelessWidget {
   const CompactLayout({
     super.key,
   });
@@ -1340,23 +1253,35 @@ class CompactLayout
       child: Padding(
         padding:
             const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+        child: Row(
           children: const [
-            IdentityCard(),
-
-            SizedBox(height: 12),
-
-            Text(
-              'Kategori Layout: Compact',
-            ),
-
-            SizedBox(height: 8),
-
             Icon(
               Icons.phone_android,
               size: 36,
+            ),
+
+            SizedBox(width: 16),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Compact Layout',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+
+                  SizedBox(height: 4),
+
+                  Text(
+                    'Kategori Layout: Compact',
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -1365,8 +1290,7 @@ class CompactLayout
   }
 }
 
-class MediumLayout
-    extends StatelessWidget {
+class MediumLayout extends StatelessWidget {
   const MediumLayout({
     super.key,
   });
@@ -1377,29 +1301,35 @@ class MediumLayout
       child: Padding(
         padding:
             const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+        child: Row(
           children: const [
-            IdentityCard(),
+            Icon(
+              Icons.tablet_android,
+              size: 36,
+            ),
 
-            SizedBox(height: 12),
+            SizedBox(width: 16),
 
-            Row(
-              children: [
-                Icon(
-                  Icons.tablet_android,
-                  size: 36,
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Medium Layout',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
 
-                SizedBox(width: 16),
+                  SizedBox(height: 4),
 
-                Expanded(
-                  child: Text(
+                  Text(
                     'Kategori Layout: Medium',
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -1408,8 +1338,7 @@ class MediumLayout
   }
 }
 
-class ExpandedLayout
-    extends StatelessWidget {
+class ExpandedLayout extends StatelessWidget {
   const ExpandedLayout({
     super.key,
   });
@@ -1420,29 +1349,35 @@ class ExpandedLayout
       child: Padding(
         padding:
             const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+        child: Row(
           children: const [
-            IdentityCard(),
+            Icon(
+              Icons.desktop_windows,
+              size: 40,
+            ),
 
-            SizedBox(height: 12),
+            SizedBox(width: 20),
 
-            Row(
-              children: [
-                Icon(
-                  Icons.desktop_windows,
-                  size: 40,
-                ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Expanded Layout',
+                    style: TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
 
-                SizedBox(width: 20),
+                  SizedBox(height: 4),
 
-                Expanded(
-                  child: Text(
+                  Text(
                     'Kategori Layout: Expanded',
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -1478,7 +1413,13 @@ class FlexibleLayoutDemo
           crossAxisAlignment:
               CrossAxisAlignment.start,
           children: [
-            const IdentityCard(),
+            const Text(
+              'Flexible Layout',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
 
             const SizedBox(height: 16),
 
@@ -1491,9 +1432,7 @@ class FlexibleLayoutDemo
                     alignment:
                         Alignment.center,
                     color:
-                        Colors
-                            .blue
-                            .shade100,
+                        Colors.blue.shade100,
                     child: const Text(
                       'Panel A\nFlex 2',
                       textAlign:
@@ -1511,9 +1450,7 @@ class FlexibleLayoutDemo
                     alignment:
                         Alignment.center,
                     color:
-                        Colors
-                            .orange
-                            .shade100,
+                        Colors.orange.shade100,
                     child: const Text(
                       'Panel B\nFlex 1',
                       textAlign:
@@ -1529,8 +1466,7 @@ class FlexibleLayoutDemo
             const Text(
               'Skills dengan Wrap',
               style: TextStyle(
-                fontWeight:
-                    FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
 
@@ -1539,14 +1475,14 @@ class FlexibleLayoutDemo
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: skills
-                  .map(
-                    (skill) => Chip(
-                      label:
-                          Text(skill),
-                    ),
-                  )
-                  .toList(),
+              children:
+                  skills
+                      .map(
+                        (skill) => Chip(
+                          label: Text(skill),
+                        ),
+                      )
+                      .toList(),
             ),
           ],
         ),
