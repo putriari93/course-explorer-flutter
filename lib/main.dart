@@ -50,6 +50,12 @@ class _DashboardPageState extends State<DashboardPage> {
     studentFuture = loadStudentData();
   }
 
+  int columnsFor(double width) {
+    if (width < 600) return 1;
+    if (width < 840) return 2;
+    return 3;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -161,8 +167,25 @@ class _DashboardPageState extends State<DashboardPage> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const SizedBox(height: 8),
-                  ...courses.map(_buildCourseCard),
+                  const Sizx(height: 8),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columnsFor(constraints.maxWidth),
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 2.8,
+                        ),
+                        itemCount: courses.length,
+                        itemBuilder: (context, index) {
+                          return _buildCourseCard(courses[index]);
+                        },
+                      );
+                    },
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Data list dimuat dari JSON statik',
