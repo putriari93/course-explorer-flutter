@@ -73,4 +73,41 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Favorite dari Courses, Detail dan Favorites memakai state sama',
+    (tester) async {
+      final provider = await pumpFixture(tester, const Size(375, 667));
+      await selectPage(tester, 'Courses');
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CourseCard).first,
+          matching: find.byTooltip('Tambahkan ke favorite'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await selectPage(tester, 'Favorites');
+      expect(find.text('Git & GitHub'), findsOneWidget);
+      expect(find.text('Favorite Courses: 1'), findsOneWidget);
+      await tester.tap(find.text('Git & GitHub'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Hapus dari favorite'));
+      await tester.pumpAndSettle();
+      expect(provider.favoriteCourses, isEmpty);
+      expect(find.text('Tambahkan ke favorite'), findsOneWidget);
+      await tester.tap(find.text('Kembali'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CourseCard), findsNothing);
+      await selectPage(tester, 'Courses');
+      expect(find.byTooltip('Hapus dari favorite'), findsNothing);
+      tester
+          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+          .clearSnackBars();
+      await tester.pumpAndSettle();
+      await tester.longPress(find.text('Git & GitHub'));
+      await tester.pumpAndSettle();
+      expect(find.text('Git & GitHub • MOB01 • 2 SKS'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

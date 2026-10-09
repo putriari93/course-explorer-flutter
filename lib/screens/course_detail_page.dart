@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../widgets/identity_card.dart';
 import '../models/course.dart';
 
+import 'package:provider/provider.dart';
+
+import '../providers/course_provider.dart';
+
 class CourseDetailPage extends StatelessWidget {
   final Course course;
 
@@ -10,6 +14,8 @@ class CourseDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CourseProvider>();
+    final isFavorite = provider.isFavorite(course.code);
     return Scaffold(
       appBar: AppBar(title: const Text('Detail Course')),
       body: SingleChildScrollView(
@@ -44,10 +50,21 @@ class CourseDetailPage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pop(context, true);
+                  context.read<CourseProvider>().toggleFavorite(course.code);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFavorite
+                            ? 'Course dihapus dari favorite'
+                            : 'Course ditambahkan ke favorite',
+                      ),
+                    ),
+                  );
                 },
-                icon: const Icon(Icons.favorite),
-                label: const Text('Pilih / Favorite'),
+                icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                label: Text(
+                  isFavorite ? 'Hapus dari favorite' : 'Tambahkan ke favorite',
+                ),
               ),
             ),
 

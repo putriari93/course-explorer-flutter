@@ -38,6 +38,8 @@ class CourseProvider extends ChangeNotifier {
 
   final Set<String> _favorites = {};
   Set<String> get favorites => Set.unmodifiable(_favorites);
+  List<Course> get favoriteCourses =>
+      List.unmodifiable(_courses.where((course) => isFavorite(course.code)));
   bool isFavorite(String code) => _favorites.contains(code);
   void toggleFavorite(String code) {
     if (!_favorites.add(code)) _favorites.remove(code);

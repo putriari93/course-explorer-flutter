@@ -35,7 +35,7 @@ class _CourseCardState extends State<CourseCard> {
           onTap: () async {
             if (isNavigating) return;
             setState(() => isNavigating = true);
-            final result = await Navigator.push<bool>(
+            await Navigator.push<void>(
               context,
               MaterialPageRoute(
                 builder: (_) => CourseDetailPage(course: course),
@@ -43,17 +43,6 @@ class _CourseCardState extends State<CourseCard> {
             );
             if (!mounted || !context.mounted) return;
             setState(() => isNavigating = false);
-            if (result == true) {
-              final provider = context.read<CourseProvider>();
-              if (!provider.isFavorite(courseCode)) {
-                provider.toggleFavorite(courseCode);
-              }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${course.title} ditambahkan ke favorite'),
-                ),
-              );
-            }
           },
           child: ListTile(
             leading: Icon(status.icon, color: status.color),

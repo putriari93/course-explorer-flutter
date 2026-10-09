@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'courses_page.dart';
 import 'profile_page.dart';
+import 'favorites_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -23,6 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
       destinations: const [
         NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
         NavigationDestination(icon: Icon(Icons.school), label: 'Courses'),
+        NavigationDestination(icon: Icon(Icons.favorite), label: 'Favorites'),
         NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
       ],
     );
@@ -45,6 +47,10 @@ class _DashboardPageState extends State<DashboardPage> {
           label: Text('Courses'),
         ),
         NavigationRailDestination(
+          icon: Icon(Icons.favorite),
+          label: Text('Favorites'),
+        ),
+        NavigationRailDestination(
           icon: Icon(Icons.person),
           label: Text('Profile'),
         ),
@@ -55,8 +61,8 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final expanded = MediaQuery.sizeOf(context).width >= 840;
-    const titles = ['Course Explorer', 'Courses', 'Profile'];
-    const pages = [HomePage(), CoursesPage(), ProfilePage()];
+    const titles = ['Course Explorer', 'Courses', 'Favorites', 'Profile'];
+    const pages = [HomePage(), CoursesPage(), FavoritesPage(), ProfilePage()];
     final content = IndexedStack(index: currentIndex, children: pages);
     return Scaffold(
       appBar: AppBar(
