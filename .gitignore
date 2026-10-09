@@ -46,3 +46,16 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Konfigurasi lokal dan rahasia
+.codex/
+.codex*
+.openai/
+.claude/
+.cursor/
+.continue/
+.aider*
+.github/copilot*
+.vscode/settings.json
+.env
+.env.*

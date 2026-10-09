@@ -27,9 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Course Explorer',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: const DashboardPage(),
@@ -40,9 +38,7 @@ class MyApp extends StatelessWidget {
 // identity card
 
 class IdentityCard extends StatelessWidget {
-  const IdentityCard({
-    super.key,
-  });
+  const IdentityCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +50,10 @@ class IdentityCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 22,
-              backgroundColor:
-                  Theme.of(context).colorScheme.primaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: Icon(
                 Icons.badge_outlined,
-                color:
-                    Theme.of(context).colorScheme.onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
 
@@ -71,15 +65,10 @@ class IdentityCard extends StatelessWidget {
                 children: [
                   Text(
                     studentName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(height: 3),
-                  Text(
-                    'NIM: $studentId',
-                  ),
+                  Text('NIM: $studentId'),
                 ],
               ),
             ),
@@ -91,13 +80,10 @@ class IdentityCard extends StatelessWidget {
 }
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({
-    super.key,
-  });
+  const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() =>
-      _DashboardPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
@@ -138,18 +124,9 @@ class _DashboardPageState extends State<DashboardPage> {
         });
       },
       destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.school),
-          label: 'Courses',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
+        NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+        NavigationDestination(icon: Icon(Icons.school), label: 'Courses'),
+        NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
       ],
     );
   }
@@ -165,10 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
       labelType: NavigationRailLabelType.all,
       groupAlignment: -1.0,
       destinations: const [
-        NavigationRailDestination(
-          icon: Icon(Icons.home),
-          label: Text('Home'),
-        ),
+        NavigationRailDestination(icon: Icon(Icons.home), label: Text('Home')),
         NavigationRailDestination(
           icon: Icon(Icons.school),
           label: Text('Courses'),
@@ -183,34 +157,24 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size =
-        MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
-    final orientation =
-        MediaQuery.of(context).orientation;
+    final orientation = MediaQuery.of(context).orientation;
 
-    final layoutType =
-        size.width < 600
-            ? 'Compact'
-            : size.width < 840
-                ? 'Medium'
-                : 'Expanded';
+    final layoutType = size.width < 600
+        ? 'Compact'
+        : size.width < 840
+        ? 'Medium'
+        : 'Expanded';
 
-    final pageTitles = [
-      'Course Explorer',
-      'Courses',
-      'Profile',
-    ];
+    final pageTitles = ['Course Explorer', 'Courses', 'Profile'];
 
     return FutureBuilder<Map<String, dynamic>>(
       future: studentFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -230,20 +194,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
         final data = snapshot.data!;
 
-        final student =
-            data['student'] as Map<String, dynamic>;
+        final student = data['student'] as Map<String, dynamic>;
 
-        final courses =
-            (data['courses'] as List<dynamic>)
-                .cast<Map<String, dynamic>>();
+        final courses = (data['courses'] as List<dynamic>)
+            .cast<Map<String, dynamic>>();
 
-        final completedCount =
-            courses
-                .where(
-                  (course) =>
-                      course['status'] == 'done',
-                )
-                .length;
+        final completedCount = courses
+            .where((course) => course['status'] == 'done')
+            .length;
 
         final pages = [
           _buildHomePage(
@@ -253,12 +211,8 @@ class _DashboardPageState extends State<DashboardPage> {
             orientation: orientation,
             layoutType: layoutType,
           ),
-          _buildCoursesPage(
-            courses: courses,
-          ),
-          _buildProfilePage(
-            student: student,
-          ),
+          _buildCoursesPage(courses: courses),
+          _buildProfilePage(student: student),
         ];
 
         return LayoutBuilder(
@@ -266,47 +220,31 @@ class _DashboardPageState extends State<DashboardPage> {
             if (constraints.maxWidth < 840) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(
-                    pageTitles[currentIndex],
-                  ),
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primary,
-                  foregroundColor:
-                      Theme.of(context).colorScheme.onPrimary,
+                  title: Text(pageTitles[currentIndex]),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
-                body: SafeArea(
-                  child: pages[currentIndex],
-                ),
-                bottomNavigationBar:
-                    _buildNavigationBar(),
+                body: SafeArea(child: pages[currentIndex]),
+                bottomNavigationBar: _buildNavigationBar(),
               );
             }
 
             return Scaffold(
               appBar: AppBar(
-                title: Text(
-                  pageTitles[currentIndex],
-                ),
-                backgroundColor:
-                    Theme.of(context).colorScheme.primary,
-                foregroundColor:
-                    Theme.of(context).colorScheme.onPrimary,
+                title: Text(pageTitles[currentIndex]),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               body: SafeArea(
                 child: Row(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildNavigationRail(),
 
-                    const VerticalDivider(
-                      width: 1,
-                    ),
+                    const VerticalDivider(width: 1),
 
                     Expanded(
-                      child: SizedBox.expand(
-                        child: pages[currentIndex],
-                      ),
+                      child: SizedBox.expand(child: pages[currentIndex]),
                     ),
                   ],
                 ),
@@ -330,10 +268,11 @@ class _DashboardPageState extends State<DashboardPage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const IdentityCard(),
+          const SizedBox(height: 12),
+          const LocalStateDemo(),
 
           const SizedBox(height: 12),
 
@@ -341,34 +280,22 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Informasi Layar',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
 
                   const SizedBox(height: 8),
 
-                  Text(
-                    'Width: ${size.width.toStringAsFixed(0)}',
-                  ),
+                  Text('Width: ${size.width.toStringAsFixed(0)}'),
 
-                  Text(
-                    'Height: ${size.height.toStringAsFixed(0)}',
-                  ),
+                  Text('Height: ${size.height.toStringAsFixed(0)}'),
 
-                  Text(
-                    'Orientation: $orientation',
-                  ),
+                  Text('Orientation: $orientation'),
 
-                  Text(
-                    'Layout: $layoutType',
-                  ),
+                  Text('Layout: $layoutType'),
                 ],
               ),
             ),
@@ -408,14 +335,11 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // course
 
-  Widget _buildCoursesPage({
-    required List<Map<String, dynamic>> courses,
-  }) {
+  Widget _buildCoursesPage({required List<Map<String, dynamic>> courses}) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const IdentityCard(),
 
@@ -423,12 +347,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
           Text(
             'Daftar Course',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 12),
@@ -441,14 +361,11 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // profile
 
-  Widget _buildProfilePage({
-    required Map<String, dynamic> student,
-  }) {
+  Widget _buildProfilePage({required Map<String, dynamic> student}) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildProfileCard(student),
 
@@ -466,9 +383,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // profile card
 
-  Widget _buildProfileCard(
-    Map<String, dynamic> student,
-  ) {
+  Widget _buildProfileCard(Map<String, dynamic> student) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -476,16 +391,10 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor:
-                  Theme.of(context)
-                      .colorScheme
-                      .primaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: Icon(
                 Icons.person,
-                color:
-                    Theme.of(context)
-                        .colorScheme
-                        .onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
 
@@ -493,27 +402,20 @@ class _DashboardPageState extends State<DashboardPage> {
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'NIM: ${student['nim']}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 4),
 
-                  Text(
-                    'Nama: ${student['name']}',
-                  ),
+                  Text('Nama: ${student['name']}'),
 
                   const SizedBox(height: 4),
 
-                  Text(
-                    student['semester'] as String,
-                  ),
+                  Text(student['semester'] as String),
                 ],
               ),
             ),
@@ -533,11 +435,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Expanded(
       child: Card(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(
-            vertical: 14,
-            horizontal: 8,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
           child: Column(
             children: [
               Icon(icon),
@@ -552,10 +450,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
 
-              Text(
-                label,
-                textAlign: TextAlign.center,
-              ),
+              Text(label, textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -565,27 +460,21 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // grid course
 
-  Widget _buildCourseGrid(
-    List<Map<String, dynamic>> courses,
-  ) {
+  Widget _buildCourseGrid(List<Map<String, dynamic>> courses) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns =
-            columnsFor(constraints.maxWidth);
+        final columns = columnsFor(constraints.maxWidth);
 
-        final itemHeight =
-            constraints.maxWidth < 600
-                ? 120.0
-                : constraints.maxWidth < 840
-                    ? 115.0
-                    : 110.0;
+        final itemHeight = constraints.maxWidth < 600
+            ? 120.0
+            : constraints.maxWidth < 840
+            ? 115.0
+            : 110.0;
 
         return GridView.builder(
           shrinkWrap: true,
-          physics:
-              const NeverScrollableScrollPhysics(),
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columns,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
@@ -593,9 +482,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           itemCount: courses.length,
           itemBuilder: (context, index) {
-            return _buildCourseCard(
-              courses[index],
-            );
+            return _buildCourseCard(courses[index]);
           },
         );
       },
@@ -604,28 +491,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // course card
 
-  Widget _buildCourseCard(
-    Map<String, dynamic> course,
-  ) {
-    final status =
-        course['status'] as String;
+  Widget _buildCourseCard(Map<String, dynamic> course) {
+    final status = course['status'] as String;
 
-    final statusInfo =
-        _statusInfo(status);
+    final statusInfo = _statusInfo(status);
 
-    final courseCode =
-        course['code'] as String;
+    final courseCode = course['code'] as String;
 
-    final isFavorite =
-        favoriteCourses.contains(
-      courseCode,
-    );
+    final isFavorite = favoriteCourses.contains(courseCode);
 
     return GestureDetector(
       // long press
       onLongPress: () {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               '${course['title']} • '
@@ -651,14 +529,10 @@ class _DashboardPageState extends State<DashboardPage> {
               isNavigating = true;
             });
 
-            final result =
-                await Navigator.push<bool>(
+            final result = await Navigator.push<bool>(
               context,
               MaterialPageRoute(
-                builder: (_) =>
-                    CourseDetailPage(
-                  course: course,
-                ),
+                builder: (_) => CourseDetailPage(course: course),
               ),
             );
 
@@ -672,33 +546,23 @@ class _DashboardPageState extends State<DashboardPage> {
 
             if (result == true) {
               setState(() {
-                favoriteCourses.add(
-                  courseCode,
-                );
+                favoriteCourses.add(courseCode);
               });
 
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    '${course['title']} ditambahkan ke favorite',
-                  ),
+                  content: Text('${course['title']} ditambahkan ke favorite'),
                 ),
               );
             }
           },
 
           child: ListTile(
-            leading: Icon(
-              statusInfo.icon,
-              color: statusInfo.color,
-            ),
+            leading: Icon(statusInfo.icon, color: statusInfo.color),
 
             title: Text(
               course['title'] as String,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
 
             subtitle: Text(
@@ -707,37 +571,26 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
             trailing: IconButton(
-              tooltip:
-                  isFavorite
-                      ? 'Hapus dari favorite'
-                      : 'Tambahkan ke favorite',
+              tooltip: isFavorite
+                  ? 'Hapus dari favorite'
+                  : 'Tambahkan ke favorite',
 
               icon: Icon(
-                isFavorite
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                color:
-                    isFavorite
-                        ? Colors.red
-                        : null,
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : null,
               ),
 
               // favorite
               onPressed: () {
                 setState(() {
                   if (isFavorite) {
-                    favoriteCourses.remove(
-                      courseCode,
-                    );
+                    favoriteCourses.remove(courseCode);
                   } else {
-                    favoriteCourses.add(
-                      courseCode,
-                    );
+                    favoriteCourses.add(courseCode);
                   }
                 });
 
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
                       isFavorite
@@ -761,15 +614,11 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Form Profil',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 16),
@@ -824,9 +673,7 @@ class _DashboardPageState extends State<DashboardPage> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: () {},
-                child: const Text(
-                  'Simpan Profil',
-                ),
+                child: const Text('Simpan Profil'),
               ),
             ),
           ],
@@ -844,46 +691,37 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Form(
           key: feedbackFormKey,
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Form Feedback',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 8),
 
               const Text(
                 '$studentId - $studentName',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 16),
 
               TextFormField(
                 initialValue: studentName,
-                decoration:
-                    const InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nama',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null ||
-                      value.trim().isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Nama wajib diisi';
                   }
 
                   return null;
                 },
                 onSaved: (value) {
-                  feedbackName =
-                      value!.trim();
+                  feedbackName = value!.trim();
                 },
               ),
 
@@ -891,22 +729,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
               TextFormField(
                 initialValue: studentId,
-                decoration:
-                    const InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'NIM',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null ||
-                      value.trim().isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'NIM wajib diisi';
                   }
 
                   return null;
                 },
                 onSaved: (value) {
-                  feedbackNim =
-                      value!.trim();
+                  feedbackNim = value!.trim();
                 },
               ),
 
@@ -914,16 +749,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
               TextFormField(
                 maxLines: 4,
-                decoration:
-                    const InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Komentar',
-                  hintText:
-                      'Masukkan komentar minimal 5 karakter',
+                  hintText: 'Masukkan komentar minimal 5 karakter',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value == null ||
-                      value.trim().isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Komentar wajib diisi';
                   }
 
@@ -934,8 +766,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  feedbackComment =
-                      value!.trim();
+                  feedbackComment = value!.trim();
                 },
               ),
 
@@ -944,116 +775,76 @@ class _DashboardPageState extends State<DashboardPage> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed:
-                      isSubmitting
-                          ? null
-                          : () async {
-                              if (!feedbackFormKey
-                                  .currentState!
-                                  .validate()) {
-                                return;
-                              }
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          if (!feedbackFormKey.currentState!.validate()) {
+                            return;
+                          }
 
-                              final confirm =
-                                  await showDialog<bool>(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title:
-                                        const Text(
-                                      'Konfirmasi',
-                                    ),
-                                    content:
-                                        const Text(
-                                      'Kirim feedback ini?',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed:
-                                            () {
-                                          Navigator.pop(
-                                            context,
-                                            false,
-                                          );
-                                        },
-                                        child:
-                                            const Text(
-                                          'Batal',
-                                        ),
-                                      ),
-                                      FilledButton(
-                                        onPressed:
-                                            () {
-                                          Navigator.pop(
-                                            context,
-                                            true,
-                                          );
-                                        },
-                                        child:
-                                            const Text(
-                                          'Kirim',
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-
-                              if (confirm != true) {
-                                return;
-                              }
-
-                              feedbackFormKey
-                                  .currentState!
-                                  .save();
-
-                              setState(() {
-                                isSubmitting = true;
-                              });
-
-                              await Future.delayed(
-                                const Duration(
-                                  seconds: 1,
-                                ),
-                              );
-
-                              if (!mounted) {
-                                return;
-                              }
-
-                              setState(() {
-                                isSubmitting = false;
-
-                                feedbackResult =
-                                    'Nama: $feedbackName\n'
-                                    'NIM: $feedbackNim\n'
-                                    'Komentar: $feedbackComment';
-                              });
-
-                              ScaffoldMessenger
-                                      .of(context)
-                                  .showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Feedback berhasil dikirim',
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Konfirmasi'),
+                                content: const Text('Kirim feedback ini?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text('Batal'),
                                   ),
-                                ),
+                                  FilledButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text('Kirim'),
+                                  ),
+                                ],
                               );
                             },
+                          );
 
-                  child:
-                      isSubmitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child:
-                                  CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Text(
-                              'Kirim Feedback',
+                          if (confirm != true) {
+                            return;
+                          }
+
+                          feedbackFormKey.currentState!.save();
+
+                          setState(() {
+                            isSubmitting = true;
+                          });
+
+                          await Future.delayed(const Duration(seconds: 1));
+
+                          if (!mounted) {
+                            return;
+                          }
+
+                          setState(() {
+                            isSubmitting = false;
+
+                            feedbackResult =
+                                'Nama: $feedbackName\n'
+                                'NIM: $feedbackNim\n'
+                                'Komentar: $feedbackComment';
+                          });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Feedback berhasil dikirim'),
                             ),
+                          );
+                        },
+
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Kirim Feedback'),
                 ),
               ),
 
@@ -1062,26 +853,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 const Text(
                   'Hasil Feedback',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 8),
 
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color:
-                        Colors.blue.shade50,
-                    borderRadius:
-                        BorderRadius.circular(8),
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    feedbackResult!,
-                  ),
+                  child: Text(feedbackResult!),
                 ),
               ],
             ],
@@ -1093,9 +877,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // status course
 
-  _StatusInfo _statusInfo(
-    String status,
-  ) {
+  _StatusInfo _statusInfo(String status) {
     switch (status) {
       case 'done':
         return const _StatusInfo(
@@ -1126,24 +908,16 @@ class _DashboardPageState extends State<DashboardPage> {
 class CourseDetailPage extends StatelessWidget {
   final Map<String, dynamic> course;
 
-  const CourseDetailPage({
-    super.key,
-    required this.course,
-  });
+  const CourseDetailPage({super.key, required this.course});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:
-            const Text('Detail Course'),
-      ),
+      appBar: AppBar(title: const Text('Detail Course')),
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const IdentityCard(),
 
@@ -1151,29 +925,20 @@ class CourseDetailPage extends StatelessWidget {
 
             Text(
               course['title'] as String,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 12),
 
-            Text(
-              'Kode: ${course['code']}',
-            ),
+            Text('Kode: ${course['code']}'),
 
             const SizedBox(height: 8),
 
-            Text(
-              'SKS: ${course['credits']}',
-            ),
+            Text('SKS: ${course['credits']}'),
 
             const SizedBox(height: 8),
 
-            Text(
-              'Status: ${course['status']}',
-            ),
+            Text('Status: ${course['status']}'),
 
             const SizedBox(height: 24),
 
@@ -1181,17 +946,10 @@ class CourseDetailPage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pop(
-                    context,
-                    true,
-                  );
+                  Navigator.pop(context, true);
                 },
-                icon: const Icon(
-                  Icons.favorite,
-                ),
-                label: const Text(
-                  'Pilih / Favorite',
-                ),
+                icon: const Icon(Icons.favorite),
+                label: const Text('Pilih / Favorite'),
               ),
             ),
 
@@ -1201,13 +959,9 @@ class CourseDetailPage extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.pop(
-                    context,
-                  );
+                  Navigator.pop(context);
                 },
-                child: const Text(
-                  'Kembali',
-                ),
+                child: const Text('Kembali'),
               ),
             ),
           ],
@@ -1219,11 +973,8 @@ class CourseDetailPage extends StatelessWidget {
 
 // responsive layout
 
-class ResponsiveLayoutDemo
-    extends StatelessWidget {
-  const ResponsiveLayoutDemo({
-    super.key,
-  });
+class ResponsiveLayoutDemo extends StatelessWidget {
+  const ResponsiveLayoutDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1231,8 +982,7 @@ class ResponsiveLayoutDemo
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
           return const CompactLayout();
-        } else if (constraints.maxWidth <
-            840) {
+        } else if (constraints.maxWidth < 840) {
           return const MediumLayout();
         } else {
           return const ExpandedLayout();
@@ -1243,43 +993,31 @@ class ResponsiveLayoutDemo
 }
 
 class CompactLayout extends StatelessWidget {
-  const CompactLayout({
-    super.key,
-  });
+  const CompactLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: const [
-            Icon(
-              Icons.phone_android,
-              size: 36,
-            ),
+            Icon(Icons.phone_android, size: 36),
 
             SizedBox(width: 16),
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Compact Layout',
-                    style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   SizedBox(height: 4),
 
-                  Text(
-                    'Kategori Layout: Compact',
-                  ),
+                  Text('Kategori Layout: Compact'),
                 ],
               ),
             ),
@@ -1291,43 +1029,31 @@ class CompactLayout extends StatelessWidget {
 }
 
 class MediumLayout extends StatelessWidget {
-  const MediumLayout({
-    super.key,
-  });
+  const MediumLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: const [
-            Icon(
-              Icons.tablet_android,
-              size: 36,
-            ),
+            Icon(Icons.tablet_android, size: 36),
 
             SizedBox(width: 16),
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Medium Layout',
-                    style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   SizedBox(height: 4),
 
-                  Text(
-                    'Kategori Layout: Medium',
-                  ),
+                  Text('Kategori Layout: Medium'),
                 ],
               ),
             ),
@@ -1339,43 +1065,31 @@ class MediumLayout extends StatelessWidget {
 }
 
 class ExpandedLayout extends StatelessWidget {
-  const ExpandedLayout({
-    super.key,
-  });
+  const ExpandedLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: const [
-            Icon(
-              Icons.desktop_windows,
-              size: 40,
-            ),
+            Icon(Icons.desktop_windows, size: 40),
 
             SizedBox(width: 20),
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Expanded Layout',
-                    style: TextStyle(
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   SizedBox(height: 4),
 
-                  Text(
-                    'Kategori Layout: Expanded',
-                  ),
+                  Text('Kategori Layout: Expanded'),
                 ],
               ),
             ),
@@ -1388,11 +1102,8 @@ class ExpandedLayout extends StatelessWidget {
 
 // expanded dan warp
 
-class FlexibleLayoutDemo
-    extends StatelessWidget {
-  const FlexibleLayoutDemo({
-    super.key,
-  });
+class FlexibleLayoutDemo extends StatelessWidget {
+  const FlexibleLayoutDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1407,18 +1118,13 @@ class FlexibleLayoutDemo
 
     return Card(
       child: Padding(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Flexible Layout',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 16),
@@ -1429,14 +1135,11 @@ class FlexibleLayoutDemo
                   flex: 2,
                   child: Container(
                     height: 80,
-                    alignment:
-                        Alignment.center,
-                    color:
-                        Colors.blue.shade100,
+                    alignment: Alignment.center,
+                    color: Colors.blue.shade100,
                     child: const Text(
                       'Panel A\nFlex 2',
-                      textAlign:
-                          TextAlign.center,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -1447,14 +1150,11 @@ class FlexibleLayoutDemo
                   flex: 1,
                   child: Container(
                     height: 80,
-                    alignment:
-                        Alignment.center,
-                    color:
-                        Colors.orange.shade100,
+                    alignment: Alignment.center,
+                    color: Colors.orange.shade100,
                     child: const Text(
                       'Panel B\nFlex 1',
-                      textAlign:
-                          TextAlign.center,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -1465,9 +1165,7 @@ class FlexibleLayoutDemo
 
             const Text(
               'Skills dengan Wrap',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -1475,14 +1173,9 @@ class FlexibleLayoutDemo
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children:
-                  skills
-                      .map(
-                        (skill) => Chip(
-                          label: Text(skill),
-                        ),
-                      )
-                      .toList(),
+              children: skills
+                  .map((skill) => Chip(label: Text(skill)))
+                  .toList(),
             ),
           ],
         ),
@@ -1503,4 +1196,41 @@ class _StatusInfo {
   final String label;
   final IconData icon;
   final Color color;
+}
+
+class LocalStateDemo extends StatefulWidget {
+  const LocalStateDemo({super.key});
+  @override
+  State<LocalStateDemo> createState() => _LocalStateDemoState();
+}
+
+class _LocalStateDemoState extends State<LocalStateDemo> {
+  bool showDetail = false;
+  @override
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Local State Demo',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          FilledButton(
+            onPressed: () {
+              setState(() {
+                showDetail = !showDetail;
+              });
+            },
+            child: Text(showDetail ? 'Sembunyikan Detail' : 'Tampilkan Detail'),
+          ),
+          if (showDetail)
+            const Text(
+              'State ini hanya mengubah panel demo. Favorite digunakan bersama beberapa halaman.',
+            ),
+        ],
+      ),
+    ),
+  );
 }
