@@ -108,7 +108,7 @@ class _ProviderScopeDemo extends StatelessWidget {
       context
           .read<
             DebugScopeValue
-          >(); // Context ini ada di atas provider di bawah.
+          >(); 
       explanation = 'Provider ditemukan';
     } on ProviderNotFoundException {
       explanation = 'ProviderNotFoundException ditangkap: context berada di atas Provider.';
